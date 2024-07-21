@@ -7,6 +7,15 @@ export default {
       type: 'string',
     },
     {
+      name: 'slug',
+      type: 'slug',
+      validation: (Rule) => Rule.required(),
+      options: {
+        source: 'title',
+        maxLength: 96,
+      },
+    },
+    {
       name: 'about',
       type: 'array', 
       of: [{type: 'block'}]

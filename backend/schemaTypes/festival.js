@@ -1,4 +1,6 @@
 import {SparklesIcon} from '@sanity/icons'
+import {CalendarIcon} from '@sanity/icons'
+import {TaskIcon} from '@sanity/icons'
 
 export default {
   name: 'festival',
@@ -13,6 +15,10 @@ export default {
   fieldsets: [
     {
       name: 'date',
+      options: { columns: 2 },
+    },
+    {
+      name: 'featured',
       options: { columns: 2 },
     },
   ],
@@ -31,6 +37,18 @@ export default {
       },
     },
     {
+      name: 'featuredMenu',
+      title: 'Menu',
+      type: 'boolean',
+      fieldset: 'featured'
+    },
+    {
+      name: 'featuredFormat',
+      title: 'Formats',
+      type: 'boolean',
+      fieldset: 'featured'
+    },
+    {
       name: 'format',
       type: 'reference',
       to: [{type: 'format'}],
@@ -42,22 +60,28 @@ export default {
         {
           type: 'object',
           name: 'day',
+          icon: CalendarIcon,
           fields: [
             {
-              name: 'dayDate',
+              name: 'date',
               type: 'date',
             },
             {
-              name: 'activity',
+              name: 'activities',
               type: 'array',
               of: [
                 {
                   type: 'object',
-                  name: 'day',
+                  name: 'activity',
+                  icon: TaskIcon,
                   fields: [
                     {
                       name: 'time',
                       type: 'string',
+                      validation: Rule => Rule.regex(/^([01]\d|2[0-3]):([0-5]\d)$/, {
+                        name: 'HH:MM', // Error message is "Does not match time pattern"
+                        invert: false // Boolean to allow any value that does NOT match pattern
+                      })
                     },
                     {
                       name: 'title',
@@ -74,7 +98,7 @@ export default {
           ],
           preview: {
             select: {
-              title: 'dayDate',
+              title: 'date',
             },
           },
         },
@@ -124,7 +148,7 @@ export default {
       const {title, cover, days} = selection;
       
       // Extract dates
-      const dates = days.map(day => day.dayDate).sort();
+      const dates = days ? days.map(day => day.date).sort() : '';
       const firstDate = dates.length > 0 ? dates[0] : '';
       const lastDate = dates.length > 1 ? dates[dates.length - 1] : '';
 
