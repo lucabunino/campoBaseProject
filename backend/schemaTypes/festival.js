@@ -111,7 +111,7 @@ export default {
       },
     },
     {
-      name: 'body',
+      name: 'content',
       type: 'array', 
       of: [{type: 'block'}]
     },

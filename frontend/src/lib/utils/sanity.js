@@ -63,7 +63,7 @@ export async function getAbout() {
 			slug {
 				current,
 			},
-			about,
+			content,
 		}
 		`
 	);
@@ -72,12 +72,15 @@ export async function getAbout() {
 export async function getEvents() {
 	return await client.fetch(
 		`
-		*[_type == "event" && !(_id in path('drafts.**'))] {
+		*[_type == "event" && !(_id in path('drafts.**')) && featuredFormat == true] {
+			_type,
 			title,
 			slug {
 				current,
 			},
-			format,
+			format->{
+				title
+			},
 			start,
 			end,
 			cover {
@@ -88,7 +91,7 @@ export async function getEvents() {
 				'width': asset->metadata.dimensions.width,
 				'aspectRatio': asset->metadata.dimensions.aspectRatio,
 			},
-		} | order(year desc)
+		} | order(start desc)
 		`
 	);
 }
@@ -96,12 +99,12 @@ export async function getEvents() {
 export async function getFestivalsMenu() {
 	return await client.fetch(
 		`
-		*[_type == "festival" && !(_id in path('drafts.**'))] {
+		*[_type == "festival" && !(_id in path('drafts.**')) && featuredMenu == true] {
+			_type,
 			title,
 			slug {
 				current,
 			},
-			featuredMenu,
 			days,
 		} | order(days[0].date asc)
 		`
@@ -111,14 +114,14 @@ export async function getFestivalsMenu() {
 export async function getFestivals() {
 	return await client.fetch(
 		`
-		*[_type == "festival" && !(_id in path('drafts.**'))] {
+		*[_type == "festival" && !(_id in path('drafts.**')) && featuredFormat == true] {
 			title,
 			slug {
 				current,
 			},
-			format,
-			featuredMenu,
-			featuredFormat,
+			format->{
+				title
+			},
 			days,
 			cover {
 				asset {
@@ -128,15 +131,16 @@ export async function getFestivals() {
 				'width': asset->metadata.dimensions.width,
 				'aspectRatio': asset->metadata.dimensions.aspectRatio,
 			},
-		} | order(year desc)
+		} | order(days[0].date desc)
 		`
 	);
 }
 
-export async function getEvent(slug) {
+export async function getItem(slug) {
 	return await client.fetch(
 		`
-		*[_type == "event" && slug.current == $slug]{
+		*[slug.current == $slug]{
+			_type,
 			title,
 			slug {
 				current,
@@ -144,39 +148,6 @@ export async function getEvent(slug) {
 			format,
 			start,
 			end,
-			cover {
-				asset {
-					_ref
-				},
-				'height': asset->metadata.dimensions.height,
-				'width': asset->metadata.dimensions.width,
-				'aspectRatio': asset->metadata.dimensions.aspectRatio,
-			},
-			slider [] {
-					asset {
-						_ref
-					},
-					'height': asset->metadata.dimensions.height,
-					'width': asset->metadata.dimensions.width,
-					'aspectRatio': asset->metadata.dimensions.aspectRatio,
-			},
-			body,
-		}
-		`,
-		{
-		slug
-	});
-}
-
-export async function getFestival(slug) {
-	return await client.fetch(
-		`
-		*[_type == "festival" && slug.current == $slug]{
-			title,
-			slug {
-				current,
-			},
-			format,
 			days,
 			cover {
 				asset {
@@ -194,7 +165,7 @@ export async function getFestival(slug) {
 					'width': asset->metadata.dimensions.width,
 					'aspectRatio': asset->metadata.dimensions.aspectRatio,
 			},
-			body,
+			content,
 		}
 		`,
 		{

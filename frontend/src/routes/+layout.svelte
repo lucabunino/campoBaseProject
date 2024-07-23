@@ -1,7 +1,6 @@
 <script>
 // Import data
 const { data, children } = $props()
-console.log(data);
 
 // Import from svelte/lib
 import { beforeNavigate, afterNavigate } from '$app/navigation';
@@ -47,7 +46,6 @@ onMount(() => {
       <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="monospace" font-size="26px" fill="#333333">200*200</text>   
     </svg>
   </a>
-  <button id="menuSwitch" onclick={(e) => menuOpen = !menuOpen}>X</button>
   <nav>
     <ul id="menu" class:open={menuOpen}>
       <li>
@@ -56,22 +54,23 @@ onMount(() => {
       <li>
         <a href="/format" class:active={$page.url.pathname === "/work"} class="menu-item">Format</a>
       </li>
-      {#each data.festivalsMenu.filter(festival => festival.featuredMenu) as festival, i}
+      {#each data.festivalsMenu as festival, i}
         <li>
-          <a href={festival.slug.current} class:active={$page.url.pathname === festival.slug.current} class="menu-item">{festival.title}</a>
+          <a href="/festivals/{festival.slug.current}" class:active={$page.url.pathname === festival.slug.current} class="menu-item">{festival.title}</a>
         </li>
       {/each}
       <li>
-        <a href={data.about[0].slug.current} class:active={$page.url.pathname === data.about[0].slug.current} class="menu-item">{data.about[0].title}</a>
+        <a href="/{data.about[0].slug.current}" class:active={$page.url.pathname === data.about[0].slug.current} class="menu-item">{data.about[0].title}</a>
       </li>
     </ul>
+    <button id="menuSwitch" onclick={(e) => menuOpen = !menuOpen}>X</button>
   </nav>
 </header>
 
 {#key data.pathname}
   <main
-  in:pageIn={workaround({ delay: 1000, duration: 1000 })}
-  out:pageOut={workaround({ delay: 0, duration: 1000, marginTop: scrollY })}
+  in:fade={workaround({ delay: 1000, duration: 1000 })}
+  out:fade={workaround({ delay: 0, duration: 1000, marginTop: scrollY })}
   bind:clientHeight={pageHeight}
   >
     {@render children()}
@@ -96,6 +95,12 @@ onMount(() => {
   top: 0;
   left: 0;
   transform: translateX(-100%);
+  transition: all 500ms ease;
+  height: -webkit-fill-available;
+  background-color: #FFF;
+  width: 30vw;
+  border-right: solid 1px #000;
+  margin: 0;
 }
 #menu.open {
   transform: translateX(0);

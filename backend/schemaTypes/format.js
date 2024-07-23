@@ -2,7 +2,7 @@ import {TagsIcon} from '@sanity/icons'
 
 export default {
   name: 'format',
-  title: 'Formats',
+  title: 'Format',
   type: 'document',
   icon: TagsIcon,
   fields: [

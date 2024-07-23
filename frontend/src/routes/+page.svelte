@@ -5,21 +5,21 @@ import { urlFor } from "$lib/utils/image.js";
 </script>
 
 <h1>{data.homepage[0].title}</h1>
-{#each  data.homepage[0].whatsOn as occurency, i}
-  <a href={occurency.slug.current}>
-    {#if occurency.cover}
-      <img class="cover" src={urlFor(occurency.cover)} alt="">
+{#each  data.homepage[0].whatsOn as item, i}
+  <a href={item._type === 'event' ? '/events/' + item.slug.current : '/festivals/' + item.slug.current}>
+    {#if item.cover}
+      <img class="cover" src={urlFor(item.cover)} alt="">
     {:else}
       <p class="cover">Missing image</p>
     {/if}
-    <h2>{occurency.title}</h2>
-    {#if occurency._type == 'event'}
-      <p>{occurency.start ? occurency.start : ''}{occurency.end ? ' - ' + occurency.end : ''}</p>
+    <h2>{item.title}</h2>
+    {#if item._type == 'event'}
+      <p>{item.start ? item.start : ''}{item.end ? ' - ' + item.end : ''}</p>
     {:else}
-      {#if occurency.days && occurency.days.length > 1}
-        <p>{occurency.days ? occurency.days[0].date : ''}{occurency.days ? ' - ' + occurency.days[occurency.days.length - 1].date : ''}</p>
-      {:else if occurency.days}
-        <p>{occurency.days[0].date}</p>
+      {#if item.days && item.days.length > 1}
+        <p>{item.days ? item.days[0].date : ''}{item.days ? ' - ' + item.days[item.days.length - 1].date : ''}</p>
+      {:else if item.days}
+        <p>{item.days[0].date}</p>
       {/if}
     {/if}
   </a>

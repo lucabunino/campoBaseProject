@@ -1,7 +1,6 @@
-import {defineType} from 'sanity'
 import {SparkleIcon} from '@sanity/icons'
 
-export default defineType({
+export default {
   name: 'event',
   title: 'Events',
   type: 'document',
@@ -14,6 +13,10 @@ export default defineType({
   fieldsets: [
     {
       name: 'date',
+      options: { columns: 2 },
+    },
+    {
+      name: 'featured',
       options: { columns: 2 },
     },
   ],
@@ -32,6 +35,12 @@ export default defineType({
       },
     },
     {
+      name: 'featuredFormat',
+      title: 'Formats',
+      type: 'boolean',
+      fieldset: 'featured'
+    },
+    {
       name: 'format',
       type: 'reference',
       to: [{type: 'format'}],
@@ -47,7 +56,7 @@ export default defineType({
       fieldset: 'date',
     },
     {
-      name: 'body',
+      name: 'content',
       type: 'array', 
       of: [{type: 'block'}]
     },
@@ -81,4 +90,4 @@ export default defineType({
       media: 'cover',
     },
   },
-})
+}

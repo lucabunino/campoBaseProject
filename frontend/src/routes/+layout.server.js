@@ -1,7 +1,4 @@
-import { getSEO } from '$lib/utils/sanity';
-import { getHomepage } from '$lib/utils/sanity';
-import { getAbout } from '$lib/utils/sanity';
-import { getFestivalsMenu } from '$lib/utils/sanity';
+import { getSEO, getHomepage, getAbout, getFestivalsMenu } from '$lib/utils/sanity';
 import { error } from '@sveltejs/kit';
 
 export async function load({ url }) {
