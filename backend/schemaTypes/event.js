@@ -16,6 +16,10 @@ export default {
       options: { columns: 2 },
     },
     {
+      name: 'place',
+      options: { columns: 2 },
+    },
+    {
       name: 'featured',
       options: { columns: 2 },
     },
@@ -23,6 +27,10 @@ export default {
   fields: [
     {
       name: 'title',
+      type: 'string',
+    },
+    {
+      name: 'subtitle',
       type: 'string',
     },
     {
@@ -56,6 +64,16 @@ export default {
       fieldset: 'date',
     },
     {
+      name: 'name',
+      type: 'string',
+      fieldset: 'place',
+    },
+    {
+      name: 'googleMaps',
+      type: 'url',
+      fieldset: 'place',
+    },
+    {
       name: 'content',
       type: 'array', 
       of: [{type: 'block'}]
@@ -86,8 +104,17 @@ export default {
   preview: {
     select: {
       title: 'title',
-      subtitle: 'start',
-      media: 'cover',
+      start: 'start',
+      end: 'end',
+      cover: 'cover',
     },
+    prepare(selection) {
+      const {title, start, end, cover} = selection;
+      return {
+        title: title,
+        subtitle: `${start ? start : ''}${end ? ' - ' + end : ''}`,
+        media: cover,
+      }
+    }
   },
 }

@@ -46,9 +46,6 @@ export async function getHomepage() {
 					'width': asset->metadata.dimensions.width,
 					'aspectRatio': asset->metadata.dimensions.aspectRatio,
 				},
-				start,
-				end,
-				days
 			}
 		}
 		`
@@ -75,10 +72,12 @@ export async function getEvents() {
 		*[_type == "event" && !(_id in path('drafts.**')) && featuredFormat == true] {
 			_type,
 			title,
+			subtitle,
 			slug {
 				current,
 			},
 			format->{
+				orderRank,
 				title
 			},
 			start,
@@ -91,6 +90,7 @@ export async function getEvents() {
 				'width': asset->metadata.dimensions.width,
 				'aspectRatio': asset->metadata.dimensions.aspectRatio,
 			},
+			externalUrl,
 		} | order(start desc)
 		`
 	);
@@ -116,12 +116,16 @@ export async function getFestivals() {
 		`
 		*[_type == "festival" && !(_id in path('drafts.**')) && featuredFormat == true] {
 			title,
+			subtitle,
 			slug {
 				current,
 			},
 			format->{
+				orderRank,
 				title
 			},
+			start,
+			end,
 			days,
 			cover {
 				asset {
@@ -131,6 +135,7 @@ export async function getFestivals() {
 				'width': asset->metadata.dimensions.width,
 				'aspectRatio': asset->metadata.dimensions.aspectRatio,
 			},
+			externalUrl,
 		} | order(days[0].date desc)
 		`
 	);
@@ -142,6 +147,7 @@ export async function getItem(slug) {
 		*[slug.current == $slug]{
 			_type,
 			title,
+			subtitle,
 			slug {
 				current,
 			},

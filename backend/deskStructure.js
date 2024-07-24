@@ -1,9 +1,9 @@
 import { CogIcon } from '@sanity/icons'
-import {HomeIcon} from '@sanity/icons'
-import {DocumentTextIcon} from '@sanity/icons'
+import {HomeIcon, DocumentTextIcon, TagsIcon} from '@sanity/icons'
+import {orderableDocumentListDeskItem} from '@sanity/orderable-document-list'
 
-export const myStructure = (S) => {
-  const pages = [
+export const myStructure = (S, context) => {
+  const topListItems = [
     S.listItem()
       .title('Homepage')
       .icon(HomeIcon)
@@ -23,16 +23,40 @@ export const myStructure = (S) => {
   ];
 
   // Filter out document types that are already included in customListItems
-  const otherListItems = S.documentTypeListItems().filter(listItem => {
-    const includedDocumentTypes = ['seo', 'homepage', 'about'];
+  const bottomListItems = S.documentTypeListItems().filter(listItem => {
+    const includedDocumentTypes = ['seo', 'homepage', 'about', 'format'];
     return !includedDocumentTypes.includes(listItem.getId());
   });
+
+  const formatListItem = S.listItem()
+    .title('Formats')
+    .icon(TagsIcon)
+    .child(
+      S.list()
+        .title('Formats')
+        .items([
+          orderableDocumentListDeskItem({
+            type: 'format',
+            title: 'Formats',
+            icon: TagsIcon,
+            S,
+            context,
+          }),
+        ])
+    );
 
   return S.list()
     .title('Content')
     .items([
-      ...pages,
-      ...otherListItems,
+      ...topListItems,
+      ...bottomListItems,
+      orderableDocumentListDeskItem({
+        type: 'format',
+        title: 'Formats',
+        icon: TagsIcon,
+        S,
+        context,
+      }),
       ...customListItems,
     ]);
 };

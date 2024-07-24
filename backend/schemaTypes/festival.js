@@ -18,6 +18,10 @@ export default {
       options: { columns: 2 },
     },
     {
+      name: 'place',
+      options: { columns: 2 },
+    },
+    {
       name: 'featured',
       options: { columns: 2 },
     },
@@ -25,6 +29,10 @@ export default {
   fields: [
     {
       name: 'title',
+      type: 'string',
+    },
+    {
+      name: 'subtitle',
       type: 'string',
     },
     {
@@ -54,8 +62,32 @@ export default {
       to: [{type: 'format'}],
     },
     {
+      name: 'externalUrl',
+      description: 'Adding this fiels adds an external link from Format, bypassing the single page',
+      type: 'url',
+    },
+    {
+      name: 'start',
+      type: 'date',
+      fieldset: 'date',
+      options: {
+        dateFormat: 'DD-MM-YYYY',
+      },
+      hidden: ({ parent }) => !parent.externalUrl
+    },
+    {
+      name: 'end',
+      type: 'date',
+      fieldset: 'date',
+      options: {
+        dateFormat: 'DD-MM-YYYY',
+      },
+      hidden: ({ parent }) => !parent.externalUrl
+    },
+    {
       name: 'days',
       type: 'array',
+      hidden: ({ parent }) => !!parent.externalUrl,
       of: [
         {
           type: 'object',
@@ -65,6 +97,9 @@ export default {
             {
               name: 'date',
               type: 'date',
+              options: {
+                dateFormat: 'DD-MM-YYYY',
+              },
             },
             {
               name: 'activities',
@@ -111,6 +146,16 @@ export default {
       },
     },
     {
+      name: 'name',
+      type: 'string',
+      fieldset: 'place',
+    },
+    {
+      name: 'googleMaps',
+      type: 'url',
+      fieldset: 'place',
+    },
+    {
       name: 'content',
       type: 'array', 
       of: [{type: 'block'}]
@@ -143,19 +188,28 @@ export default {
       title: 'title',
       cover: 'cover',
       days: 'days',
+      start: 'start',
+      end: 'end',
+      url: 'externalUrl'
     },
     prepare(selection) {
-      const {title, cover, days} = selection;
-      
-      // Extract dates
-      const dates = days ? days.map(day => day.date).sort() : '';
-      const firstDate = dates.length > 0 ? dates[0] : '';
-      const lastDate = dates.length > 1 ? dates[dates.length - 1] : '';
+      const {title, cover, days, start, end, url} = selection;
 
-      return {
-        title: title,
-        subtitle: `${firstDate ? firstDate : ''}${lastDate ? ' - ' + lastDate : ''}`,
-        media: cover,
+      if (url) {
+        return {
+          title: title,
+          subtitle: `${start ? start : ''}${end ? ' - ' + end : ''}`,
+          media: cover,
+        }
+      } else {
+        const dates = days ? days.map(day => day.date).sort() : '';
+        const firstDate = dates.length > 0 ? dates[0] : '';
+        const lastDate = dates.length > 1 ? dates[dates.length - 1] : '';
+        return {
+          title: title,
+          subtitle: `${firstDate ? firstDate : ''}${lastDate ? ' - ' + lastDate : ''}`,
+          media: cover,
+        }
       }
     }
   }
