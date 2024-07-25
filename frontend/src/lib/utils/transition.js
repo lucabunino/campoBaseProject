@@ -22,7 +22,7 @@ export function pageIn(node, { delay, duration }) {
     css: (t) => {
       const eased = quadInOut(t);
       return `
-        opacity: ${eased};
+        opacity: 0;
         // -webkit-transform: translateY(${(1 - eased) * 100}vw) translateZ(0);
         // -moz-transform: translateY(${(1 - eased) * 100}vw) translateZ(0);
         // -ms-transform: translateY(${(1 - eased) * 100}vw) translateZ(0);
@@ -42,8 +42,8 @@ export function pageOut(node, { delay, duration, marginTop }) {
       return `
         position: absolute;
         margin-top: -${marginTop}px;
-        // top: ${-(1 - eased) * 120}vw;
         opacity: ${eased};
+        // top: ${-(1 - eased) * 120}vw;
         // -webkit-transform: translateY(${-(1 - eased) * 100}vw) translateZ(0);
         // -moz-transform: translateY(${-(1 - eased) * 100}vw) translateZ(0);
         // -ms-transform: translateY(${-(1 - eased) * 100}vw) translateZ(0);
