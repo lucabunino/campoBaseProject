@@ -1,8 +1,8 @@
-import { getItem } from '$lib/utils/sanity.js';
+import { getEvent } from '$lib/utils/sanity.js';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params }) {
-	const item = await getItem(params.slug);
+	const item = await getEvent(params.slug);
 	if (item) {
 		return {
 			item,

@@ -1,8 +1,18 @@
 <script>
+// Import data
 const { data } = $props()
-let h1Height = $state()
 
+// Import from svelte/lib
 import { urlFor } from "$lib/utils/image.js";
+
+// Import stores
+import { getColor } from '$lib/stores/color.svelte.js';
+const colorer = getColor();
+colorer.changePrimaryColor('#3873D1');
+colorer.changeSecondaryColor('#CCBFAA');
+
+// Variables
+let h1Height = $state()
 </script>
 
 <h1 bind:clientHeight={h1Height}>{data.homepage[0].title}</h1>
@@ -19,17 +29,21 @@ import { urlFor } from "$lib/utils/image.js";
   {/each}
 </section>
 <style>
+/* Common */
 h1  {
   padding: 3em 0 1.66em;
-  position: fixed;
+  position: sticky;
   top: 0;
   pointer-events: none;
+  z-index: 1;
 }
 section {
   border-top: solid 1px #000;
-  margin-top: 5.86em;
+  /* margin-top: 5.86em; */
   width: 100%;
 }
+
+/* Content */
 a {
   display: flex;
   flex-direction: column;
@@ -54,5 +68,10 @@ p.cover {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+@media screen and (max-width: 1080px) {
+  .cover {
+    width: 70%;
+  }
 }
 </style>

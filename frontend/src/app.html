@@ -28,7 +28,8 @@
 		font-family: miller-headline, 'Times New Roman', Times, serif;
 		font-weight: 300;
 		font-style: normal;
-		font-size: clamp(30px, calc(30.8px - 19.2px + 2vw), 70px);
+		font-size: clamp(20px, calc(30.8px - 19.2px - 19.2px + 3vw), 70px);
+		/* font-size: clamp(30px, calc(-46px + 5vw), 70px); */
 		line-height: 1.2;
 		text-align: center;
 		-webkit-font-smoothing: antialiased;
@@ -38,8 +39,14 @@
 		font-size: inherit;
 		font-weight: inherit;
 	}
-	.font-xs {font-size: .5rem;}
+	.font-xs {font-size: .7rem;}
 	.font-s {font-size: 1rem;}
 	.font-m {font-size: 1.28rem; line-height: 1.06;}
 	.font-l, section, h1 {font-size: 1.68rem;}
+
+	@media screen and (max-width: 1080px) {
+		:root {
+			--gutter: 32px
+		}
+	}
 </style>

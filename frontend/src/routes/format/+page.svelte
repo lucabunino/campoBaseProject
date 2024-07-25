@@ -2,23 +2,28 @@
 // Import data
 const { data } = $props()
 
+// Import from svelte/lib
 import { urlFor } from "$lib/utils/image.js";
 import { slide } from "svelte/transition";
 import { formatDate } from "$lib/utils/date.js";
 
+// Import stores
+import { getColor } from '$lib/stores/color.svelte.js';
+const colorer = getColor();
+colorer.changePrimaryColor('#CC78FF');
+colorer.changeSecondaryColor('#3873D1');
+
+// Variables
 let openFormat = $state(undefined)
 let openFormatHeight = $state()
 let scrollY = $state()
 
+// Functions
 function toggleFormat(formatIndex, event) {
   if (openFormat === formatIndex) {
     openFormat = undefined
   } else {
     openFormat = formatIndex
-    // const el = document.body.querySelector(`[data-format="${formatIndex}"]`);
-    // console.log(el?.clientHeight);
-    // console.log(el?.lastChild?.clientHeight);
-    // openFormatHeight = el?.clientHeight + el?.lastChild?.clientHeight
     // scrollY = scrollY + event.target.clientHeight;
   }
 }
@@ -70,17 +75,21 @@ function toggleFormat(formatIndex, event) {
 </section>
 
 <style>
+/* Common */
 h1  {
   padding: 3em 0 1.66em;
-  position: fixed;
+  position: sticky;
   top: 0;
   pointer-events: none;
+  z-index: 1;
 }
 section {
   border-top: solid 1px #000;
-  margin-top: 5.86em;
+  /* margin-top: 5.86em; */
   width: 100%;
 }
+
+/* Content */
 h3, .format-item {
   display: block;
   cursor: pointer;

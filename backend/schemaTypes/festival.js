@@ -22,6 +22,10 @@ export default {
       options: { columns: 2 },
     },
     {
+      name: 'color',
+      options: { columns: 2 },
+    },
+    {
       name: 'featured',
       options: { columns: 2 },
     },
@@ -63,7 +67,7 @@ export default {
     },
     {
       name: 'externalUrl',
-      description: 'Adding this fiels adds an external link from Format, bypassing the single page',
+      description: 'Adding this field adds an external link from Format, bypassing the single page',
       type: 'url',
     },
     {
@@ -109,22 +113,48 @@ export default {
                   type: 'object',
                   name: 'activity',
                   icon: TaskIcon,
-                  fields: [
+                  fieldsets: [
                     {
                       name: 'time',
+                      options: { columns: 2 },
+                    },
+                    {
+                      name: 'link',
+                      options: { columns: 2 },
+                    },
+                  ],
+                  fields: [
+                    {
+                      name: 'start',
                       type: 'string',
+                      fieldset: 'time',
                       validation: Rule => Rule.regex(/^([01]\d|2[0-3]):([0-5]\d)$/, {
                         name: 'HH:MM', // Error message is "Does not match time pattern"
                         invert: false // Boolean to allow any value that does NOT match pattern
-                      })
+                      }),
+                    },
+                    {
+                      name: 'end',
+                      type: 'string',
+                      fieldset: 'time',
+                      validation: Rule => Rule.regex(/^([01]\d|2[0-3]):([0-5]\d)$/, {
+                        name: 'HH:MM', // Error message is "Does not match time pattern"
+                        invert: false // Boolean to allow any value that does NOT match pattern
+                      }),
                     },
                     {
                       name: 'title',
                       type: 'string',
                     },
                     {
+                      name: 'label',
+                      type: 'string',
+                      fieldset: 'link',
+                    },
+                    {
                       name: 'url',
                       type: 'url',
+                      fieldset: 'link',
                     },
                   ]
                 }
@@ -162,6 +192,29 @@ export default {
     },
     {
       name: 'cover',
+      type: 'image',
+      group: 'media',
+    },
+    {
+      name: 'background',
+      type: 'color',
+      options: {
+        disableAlpha: true
+      },
+      fieldset: 'color',
+      group: 'media',
+    },
+    {
+      name: 'hover',
+      type: 'color',
+      options: {
+        disableAlpha: true
+      },
+      fieldset: 'color',
+      group: 'media',
+    },
+    {
+      name: 'backgroundImage',
       type: 'image',
       group: 'media',
     },

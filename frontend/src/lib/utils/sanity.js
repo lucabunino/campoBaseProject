@@ -141,19 +141,13 @@ export async function getFestivals() {
 	);
 }
 
-export async function getItem(slug) {
+export async function getFestival(slug) {
 	return await client.fetch(
 		`
-		*[slug.current == $slug]{
+		*[_type == "festival" && slug.current == $slug]{
 			_type,
 			title,
 			subtitle,
-			slug {
-				current,
-			},
-			format,
-			start,
-			end,
 			days,
 			cover {
 				asset {
@@ -172,6 +166,48 @@ export async function getItem(slug) {
 					'aspectRatio': asset->metadata.dimensions.aspectRatio,
 			},
 			content,
+			background,
+			hover,
+			backgroundImage,
+		}
+		`,
+		{
+		slug
+	});
+}
+
+export async function getEvent(slug) {
+	return await client.fetch(
+		`
+		*[_type == "event" && slug.current == $slug]{
+			_type,
+			title,
+			subtitle,
+			slug {
+				current,
+			},
+			format,
+			start,
+			end,
+			cover {
+				asset {
+					_ref
+				},
+				'height': asset->metadata.dimensions.height,
+				'width': asset->metadata.dimensions.width,
+				'aspectRatio': asset->metadata.dimensions.aspectRatio,
+			},
+			slider [] {
+					asset {
+						_ref
+					},
+					'height': asset->metadata.dimensions.height,
+					'width': asset->metadata.dimensions.width,
+					'aspectRatio': asset->metadata.dimensions.aspectRatio,
+			},
+			content,
+			name,
+			googleMaps
 		}
 		`,
 		{

@@ -19,9 +19,9 @@ function findMark(markDefs, key) {
               <strong>{child.text}</strong>
             {:else if findMark(block.markDefs, mark)._type === 'link'}
               {#if findMark(block.markDefs, mark).blank}
-                <a href="{findMark(block.markDefs, mark).href}" target="_blank">{child.text}</a>
+                <a class="underline" href="{findMark(block.markDefs, mark).href}" target="_blank">{child.text}</a>
               {:else}
-                <a href="{findMark(block.markDefs, mark).href}">{child.text}</a>
+                <a class="underline" href="{findMark(block.markDefs, mark).href}">{child.text}</a>
               {/if}
             {:else}
               {child.text}
@@ -38,3 +38,11 @@ function findMark(markDefs, key) {
     {@html `<${block.style}>` + block.children[0].text + `</${block.style}>`}
   {/if}
 {/each}
+
+<style>
+.underline {
+  text-decoration: underline;
+  text-underline-offset: .15em;
+  text-decoration-thickness: 1px;
+}
+</style>

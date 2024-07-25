@@ -4,11 +4,15 @@ const { data, children } = $props()
 
 // Import from svelte/lib
 import { beforeNavigate, afterNavigate } from '$app/navigation';
-import { page } from '$app/stores';
+import { page, navigating } from '$app/stores';
 import { urlFor } from '$lib/utils/image';
 import { onMount } from 'svelte'
-import { fade } from 'svelte/transition'
-import { workaround, pageIn, pageOut, mockTransition } from '$lib/utils/transition';
+import { slide } from 'svelte/transition'
+import { workaround, pageIn, pageOut, loaderIn, loaderOut } from '$lib/utils/transition';
+
+// Import stores
+import { getColor } from '$lib/stores/color.svelte.js';
+const colorer = getColor();
 
 // Variables
 let innerWidth = $state();
@@ -17,31 +21,9 @@ let pageHeight = $state();
 let ready = $state(false);
 let scrollY = $state(0)
 let menuOpen = $state()
-let primaryColor = $state('#3873D1')
-let secondaryColor = $state('#CCBFAA')
 
 onMount(() => {
-  if ($page.url.pathname) {
-    ready = true;
-  }
-});
-
-$effect(() => {
-  if ($page.url.pathname === '/') {
-    primaryColor = '#3873D1'; secondaryColor = '#CCBFAA';
-  }
-  if ($page.url.pathname === `/${data.about[0].slug.current}`) {
-    primaryColor = '#8A7369'; secondaryColor = '#FF6B6B';
-  }
-  if ($page.url.pathname === '/format') {
-    primaryColor = '#CC78FF'; secondaryColor = '#3873D1';
-  }
-  if ($page.url.pathname.includes('/festivals/')) {
-    primaryColor = '#3873D1'; secondaryColor = '#CCBFAA';
-  }
-  if ($page.url.pathname.includes('/events/')) {
-    primaryColor = '#8A7369'; secondaryColor = '#FF6B6B';
-  }
+  if ($page.url.pathname) {ready = true;}
 });
 </script>
   
@@ -61,8 +43,16 @@ $effect(() => {
 
 <svelte:window bind:innerWidth bind:innerHeight bind:scrollY/>
 
+{#key data.pathname}
+  <div id="loader"
+  class:active={$navigating}
+  style="background-color: {colorer.secondaryColor};"
+  out:loaderOut={workaround({ delay: 1000, duration: 1000 })}
+  ></div>
+{/key}
+
 {#if ready}
-  <div style="display:contents; --primaryColor: {primaryColor};--secondaryColor: {secondaryColor};">
+  <div style="display:contents; --primaryColor: {colorer.primaryColor};--secondaryColor: {colorer.secondaryColor};">
     <div id="bg"></div>
     <header>
       <a href="/" id="logo" onclick={(e) => menuOpen = false}>
@@ -76,15 +66,18 @@ $effect(() => {
             <a href="/" onclick={(e) => menuOpen = false} class:active={$page.url.pathname === "/"}>{data.homepage[0].title}</a>
           </li>
           <li class="menu-item">
-            <a href="/format" onclick={(e) => menuOpen = false} class:active={$page.url.pathname === "/work"}>Format</a>
+            <a href="/format" onclick={(e) => menuOpen = false} class:active={$page.url.pathname === "/format"}>Format</a>
           </li>
           {#each data.festivalsMenu as festival, i}
             <li class="menu-item">
-              <a href="/festivals/{festival.slug.current}" onclick={(e) => menuOpen = false} class:active={$page.url.pathname === festival.slug.current}>{festival.title}</a>
+              <a href="/festivals/{festival.slug.current}" onclick={(e) => menuOpen = false} class:active={$page.url.pathname === `/festivals/${festival.slug.current}`}>{festival.title}</a>
             </li>
           {/each}
           <li class="menu-item">
-            <a href="/{data.about[0].slug.current}" onclick={(e) => menuOpen = false} class:active={$page.url.pathname === data.about[0].slug.current}>{data.about[0].title}</a>
+            <a href="/{data.about[0].slug.current}" onclick={(e) => menuOpen = false} class:active={$page.url.pathname === `/${data.about[0].slug.current}`}>{data.about[0].title}</a>
+          </li>
+          <li class="menu-item last">
+            <a href="https://www.instagram.com/projectcampobase" target="_blank">Insta</a>
           </li>
         </ul>
         <button id="menuSwitch" onclick={(e) => menuOpen = !menuOpen}>{!menuOpen ? 'Menu' : 'X'}</button>
@@ -93,34 +86,74 @@ $effect(() => {
 
     {#key data.pathname}
       <main
-      in:fade={workaround({ delay: 200, duration: 200 })}
-      out:fade={workaround({ delay: 0, duration: 200, marginTop: scrollY })}
+      in:pageIn={workaround({ delay: 1000, duration: 0, marginTop: scrollY })}
+      out:pageOut={workaround({ delay: 0, duration: 1000, marginTop: scrollY })}
       bind:clientHeight={pageHeight}
       >
+      <!-- <main
+      bind:clientHeight={pageHeight}
+      > -->
         {@render children()}
       </main>
     {/key}
 
-    <footer>
-      <p class="footer-item one">©{new Date().getFullYear()} {data.seo[0].SEOTitle}</p>
-      <a href="/" class="footer-item two">Privacy</a>
-      <a href="/" class="footer-item three">Cookies</a>
+    <footer class="font-xs">
+      <p class="footer-item">©{new Date().getFullYear()} {data.seo[0].SEOTitle}, All rights reserved</p>
     </footer>
   </div>
 {/if}
 
 <style>
-/* Bg */
+@keyframes loadToFull {
+  0% {
+    left: -100vw;
+  }
+  100% {
+    left: 0;
+  }
+}
+
+@keyframes stayInPlace {
+  0% {
+    left: 0;
+  }
+  100% {
+    left: 0;
+  }
+}
+
+@keyframes unloadToEmpty {
+  0% {
+    left: 0;
+  }
+  100% {
+    left: 100vw;
+  }
+}
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  border-left: solid 1px #000;
+  border-right: solid 1px #000;
+  animation: loadToFull 500ms forwards, unloadToEmpty 500ms forwards 1000ms;
+  transition: background-color ease-in-out 500ms;
+  transition-delay: 1000ms;
+}
 #bg {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   z-index: -1;
   background-color: var(--primaryColor);
+  transition: background-color ease-in-out 500ms;
+  transition-delay: 750ms;
 }
-
 /* Menu */
 #menuSwitch {
   position: fixed;
@@ -146,6 +179,7 @@ $effect(() => {
   margin: 0;
   padding: 208px var(--gutter);
   text-align: left;
+  overflow-y: scroll;
 }
 #menu.open {
   transform: translateX(0);
@@ -157,6 +191,12 @@ $effect(() => {
   display: block;
   padding: .625em 0;
   border-top: solid 1px #000;
+}
+.menu-item a.active {
+  color: var(--secondaryColor);
+}
+.menu-item.last a {
+  border-bottom: solid 1px #000;
 }
 
 /* Header */
@@ -184,16 +224,23 @@ header {
 
 /* Main */
 main {
-  margin: 0 16.146vw;
+  width: 67.708vw;
+  margin-left: 16.146vw;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: calc(100vh - 7.7*.7rem);
+}
+@media screen and (max-width: 1080px) {
+  main {
+    width: calc(100vw - 64px);
+    margin-left: 32px;
+  }
 }
 
 /* Footer */
 footer {
-  margin-top: 10em;
-  font-size: .5rem;
-  margin-bottom: 2em;
+  margin-top: 5em;
+  margin-bottom: 1.5em;
 }
 </style>
