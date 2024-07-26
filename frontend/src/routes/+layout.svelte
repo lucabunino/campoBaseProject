@@ -221,7 +221,7 @@ onMount(() => {
   padding: 3.5em var(--gutter);
   text-align: left;
   overflow-y: scroll;
-  z-index: 3;
+  z-index: 5;
 }
 #menu.open {
   transform: translateX(0);
@@ -271,7 +271,7 @@ onMount(() => {
   border: solid 1px #000;
   padding: 1em var(--gutter);
   text-align: left;
-  z-index: 2;
+  z-index: 4;
 }
 #newsletter.open {
   transform: translateX(0) translateY(0);
