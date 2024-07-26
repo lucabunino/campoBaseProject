@@ -91,7 +91,7 @@ onMount(() => {
       </nav>
     </header>
     <div id="newsletter" bind:clientHeight={newsletterHeight} class="font-m"
-    class:open={newsletterOpen}
+    class:open={newsletterOpen && $page.url.pathname === "/"}
     style="margin-top: -{scrollNewsletter > newsletterHeight - innerHeight*.2 ? newsletterHeight - innerHeight*.2 : scrollNewsletter}px"
     >
       <button class="font-s" id="newsletterSwitch" onclick={(e) => newsletterOpen = !newsletterOpen}>X</button>
