@@ -21,6 +21,9 @@ let pageHeight = $state();
 let ready = $state(false);
 let scrollY = $state(0)
 let menuOpen = $state()
+let newsletterOpen = $state(true)
+let scrollNewsletter = $derived(scrollY/2)
+let newsletterHeight = $state()
 
 onMount(() => {
   if ($page.url.pathname) {
@@ -56,7 +59,7 @@ onMount(() => {
 {/key}
 
 {#if ready}
-  <div style="display:contents; --primaryColor: {colorer.primaryColor};--secondaryColor: {colorer.secondaryColor};">
+  <div style="display:contents; --primaryColor: {colorer.primaryColor};--secondaryColor: {colorer.secondaryColor};--scrollNewsletter: {scrollNewsletter}">
     <div id="bg"></div>
     <header>
       <a href="/" id="logo" onclick={(e) => menuOpen = false}>
@@ -87,6 +90,28 @@ onMount(() => {
         <button id="menuSwitch" onclick={(e) => menuOpen = !menuOpen}>{!menuOpen ? 'Menu' : 'X'}</button>
       </nav>
     </header>
+    <div id="newsletter" bind:clientHeight={newsletterHeight} class="font-m"
+    class:open={newsletterOpen}
+    style="margin-top: -{scrollNewsletter > newsletterHeight - innerHeight*.2 ? newsletterHeight - innerHeight*.2 : scrollNewsletter}px"
+    >
+      <button class="font-s" id="newsletterSwitch" onclick={(e) => newsletterOpen = !newsletterOpen}>X</button>
+      <h4>Newsletter</h4>
+      <form action="">
+        <div class="form-item">
+          <p class="font-xs">email</p>
+          <input type="email" name="email" placeholder="email@example.com">
+        </div>
+        <div class="form-item">
+          <p class="font-xs">nome</p>
+          <input type="text" name="name" placeholder="Nomen">
+        </div>
+        <div class="form-item">
+          <p class="font-xs">cognome</p>
+          <input type="text" name="surname" placeholder="Nescio">
+        </div>
+        <button class="font-xs submit">submit</button>
+      </form>
+    </div>
 
     {#key data.pathname}
       <main
@@ -221,6 +246,83 @@ onMount(() => {
     width: 70vw;
     border-bottom: solid 1px #000;
     padding: 4em var(--gutter);
+  }
+}
+
+/* Newsletter */
+#newsletterSwitch {
+  margin-bottom: 1em;
+  padding: 0;
+  font-size: inherit;
+  font-family: inherit;
+  background-color: inherit;
+  border: none;
+  cursor: pointer;
+}
+#newsletter {
+  position: fixed;
+  top: 70vh;
+  right: var(--gutter);
+  transform: translateX(100vw);
+  transition: transform ease-in-out 500ms;
+  width: 35vw;
+  height: auto;
+  background-color: var(--secondaryColor);
+  border: solid 1px #000;
+  padding: 1em var(--gutter);
+  text-align: left;
+  z-index: 2;
+}
+#newsletter.open {
+  transform: translateX(0) translateY(0);
+}
+h4 {
+  margin-bottom: 1em;
+}
+.form-item {
+  display: flex;
+  padding: .3em 0;
+  gap: .5em;
+  align-items: center;
+  border-top: solid 1px #000;
+}
+.form-item:last-of-type {
+  border-bottom: solid 1px #000;
+}
+.form-item input {
+  background-color: unset;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+.form-item input::placeholder {
+  color: inherit;
+  opacity: .4;
+}
+.submit {
+  display: block;
+  padding: 0;
+  font-family: inherit;
+  background-color: inherit;
+  border: none;
+  cursor: pointer;
+  margin-top: 1em;
+}
+#newsletterSwitch:hover,
+.submit:hover {
+  color: #000;
+  opacity: .4;
+}
+@media screen and (max-width: 1080px) {
+  #newsletter {
+    right: 0;
+    top: unset;
+    bottom: var(--gutter);
+    margin: 0 var(--gutter);
+    width: -webkit-fill-available;
+    transform: translateX(0) translateY(100vh);
   }
 }
 
