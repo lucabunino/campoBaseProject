@@ -93,7 +93,7 @@ section {
 h3, .format-item {
   display: block;
   cursor: pointer;
-  padding: .3em 0 .25em;
+  padding: .3em 0;
   width: 100%;
   border-bottom: solid 1px #000;
 }
@@ -127,5 +127,10 @@ h3:hover {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+@media screen and (max-width: 1080px) {
+  .format-item {
+    grid-template-columns: calc(100px + 12vw) auto;
+  }
 }
 </style>

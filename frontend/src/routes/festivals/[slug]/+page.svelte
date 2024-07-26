@@ -121,7 +121,7 @@ h1  {
   position: sticky;
   top: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
 }
 section {
   border-top: solid 1px #000;
@@ -136,19 +136,22 @@ section {
 }
 .cover,
 swiper-container {
-  width: 100%;
+  width: calc(100vw - 16.146vw*2);
+  width: -webkit-fill-available;
   height: auto;
   padding: .5em 0;
-  display: block;
   border-bottom: solid 1px #000;
   display: block;
+}
+swiper-slide {
+  width: 100%;
 }
 swiper-slide img {
   width: 100%;
   display: block;
 }
 .day {
-  padding: .3em 0 .25em;
+  padding: .3em 0;
   border-bottom: solid 1px #000;
   width: 100%;
   text-transform: capitalize;
@@ -162,10 +165,21 @@ swiper-slide img {
   grid-template-columns: 20% 50% auto;
   text-align: left;
   gap: .5em;
-  padding: .3em 0 .25em;
+  padding: .3em 0;
   border-bottom: solid 1px #000;
 }
 .label {
   text-align: right;
+}
+@media screen and (max-width: 800px) {
+  .activity {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: .6em 0;
+  }
+  .label {
+    text-align: left;
+  }
 }
 </style>

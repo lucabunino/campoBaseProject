@@ -23,7 +23,11 @@ let scrollY = $state(0)
 let menuOpen = $state()
 
 onMount(() => {
-  if ($page.url.pathname) {ready = true;}
+  if ($page.url.pathname) {
+    setTimeout(() => {
+      ready = true;
+    }, 400);
+  }
 });
 </script>
   
@@ -86,8 +90,8 @@ onMount(() => {
 
     {#key data.pathname}
       <main
-      in:pageIn={workaround({ delay: 1000, duration: 0, marginTop: scrollY })}
-      out:pageOut={workaround({ delay: 0, duration: 1000, marginTop: scrollY })}
+      in:pageIn={workaround({ delay: 300, duration: 0, marginTop: scrollY })}
+      out:pageOut={workaround({ delay: 0, duration: 300, marginTop: scrollY })}
       bind:clientHeight={pageHeight}
       >
       <!-- <main
@@ -104,7 +108,7 @@ onMount(() => {
 {/if}
 
 <style>
-@keyframes loadToFull {
+@keyframes leftLoad {
   0% {
     left: -100vw;
   }
@@ -112,22 +116,28 @@ onMount(() => {
     left: 0;
   }
 }
-
-@keyframes stayInPlace {
-  0% {
-    left: 0;
-  }
-  100% {
-    left: 0;
-  }
-}
-
-@keyframes unloadToEmpty {
+@keyframes leftUnload {
   0% {
     left: 0;
   }
   100% {
     left: 100vw;
+  }
+}
+@keyframes topLoad {
+  0% {
+    top: 100vh;
+  }
+  100% {
+    top: 0;
+  }
+}
+@keyframes topUnload {
+  0% {
+    top: 0;
+  }
+  100% {
+    top: -100vh;
   }
 }
 #loader {
@@ -139,7 +149,7 @@ onMount(() => {
   z-index: 10;
   border-left: solid 1px #000;
   border-right: solid 1px #000;
-  animation: loadToFull 500ms forwards, unloadToEmpty 500ms forwards 1000ms;
+  animation: leftLoad 300ms forwards, leftUnload 300ms forwards 600ms;
   transition: background-color ease-in-out 500ms;
   transition-delay: 1000ms;
 }
@@ -151,9 +161,15 @@ onMount(() => {
   height: 100vh;
   z-index: -1;
   background-color: var(--primaryColor);
-  transition: background-color ease-in-out 500ms;
-  transition-delay: 750ms;
+  transition: background-color ease-in-out 100ms;
+  transition-delay: 300ms;
 }
+@media screen and (max-width: 1080px) {
+  #loader {
+    animation: topLoad 300ms forwards, topUnload 300ms forwards 600ms;
+  }
+}
+
 /* Menu */
 #menuSwitch {
   position: fixed;
@@ -177,7 +193,7 @@ onMount(() => {
   width: 35vw;
   border-right: solid 1px #000;
   margin: 0;
-  padding: 208px var(--gutter);
+  padding: 3.5em var(--gutter);
   text-align: left;
   overflow-y: scroll;
 }
@@ -197,6 +213,14 @@ onMount(() => {
 }
 .menu-item.last a {
   border-bottom: solid 1px #000;
+}
+@media screen and (max-width: 1080px) {
+  #menu {
+    height: auto;
+    width: 70vw;
+    border-bottom: solid 1px #000;
+    padding: 4em var(--gutter);
+  }
 }
 
 /* Header */

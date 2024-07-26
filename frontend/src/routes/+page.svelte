@@ -52,7 +52,7 @@ a {
   border-bottom: solid 1px #000;
 }
 h2 {
-  padding: .3em 0 .25em;
+  padding: .3em 0;
   border-bottom: solid 1px #000;
   margin-bottom: .4em;
   width: 100%;

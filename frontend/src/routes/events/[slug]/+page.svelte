@@ -22,7 +22,7 @@ colorer.changeSecondaryColor('#FF6B6B');
 <!-- <section class={item._type} style="{item.subtitle ? 'margin-top: 7.06em;' : ''}"> -->
 <section class={item._type}>
   {#if item.slider}
-    <swiper-container>
+    <swiper-container loop=true space-between=16 autoplay={{delay: 2500,disableOnInteraction: true,waitForTransition: true}}>
       {#each item.slider as slide}
         <swiper-slide>
           <img src={urlFor(slide)} alt="Image for {item.title}">
@@ -34,7 +34,7 @@ colorer.changeSecondaryColor('#FF6B6B');
   {/if}
   <div id="info">
     <p class="date font-m">{formatDate(item.start, item.end)}</p>
-    <a class="place font-m" href={item.googleMaps} target="_blank">{item.name}</a>
+    {#if item.name}<a class="place font-m" href={item.googleMaps} target="_blank">{item.name}</a>{/if}
   </div>
   {#if item.content}
     <div id="content">
@@ -50,7 +50,7 @@ h1  {
   position: sticky;
   top: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
 }
 section {
   border-top: solid 1px #000;
@@ -66,6 +66,7 @@ section {
 .cover,
 swiper-container {
   width: calc(100vw - 16.146vw*2);
+  width: -webkit-fill-available;
   height: auto;
   padding: .5em 0;
   border-bottom: solid 1px #000;
@@ -85,7 +86,18 @@ swiper-slide img {
   border-bottom: solid 1px #000;
 }
 #content {
-  padding: .3em 0 .25em;
+  padding: .3em 0;
   border-bottom: solid 1px #000;
+}
+@media screen and (max-width: 1080px) {
+  #info {
+    flex-wrap: wrap;
+    gap: .2em;
+  }
+}
+@media screen and (max-width: 600px) {
+  #info {
+    flex-direction: column;
+  }
 }
 </style>

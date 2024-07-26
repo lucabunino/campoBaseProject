@@ -31,6 +31,6 @@ section {
   border-bottom: solid 1px #000;
   /* margin-top: 5.86em; */
   width: 100%;
-  padding: .3em 0 .25em;
+  padding: .3em 0;
 }
 </style>

@@ -45,4 +45,10 @@ function findMark(markDefs, key) {
   text-underline-offset: .15em;
   text-decoration-thickness: 1px;
 }
+p {
+  margin-top: 1.2em;
+}
+p:first-of-type {
+  margin-top: 0;
+}
 </style>
