@@ -32,8 +32,6 @@ let h1Height = $state()
 /* Common */
 h1  {
   padding: 3em 0 1.66em;
-  position: sticky;
-  top: 0;
   pointer-events: none;
   z-index: 1;
 }
