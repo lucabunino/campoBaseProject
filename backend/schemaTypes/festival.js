@@ -34,6 +34,7 @@ export default {
     {
       name: 'title',
       type: 'string',
+      validation: (Rule) => Rule.required(),
     },
     {
       name: 'subtitle',
@@ -64,6 +65,7 @@ export default {
       name: 'format',
       type: 'reference',
       to: [{type: 'format'}],
+      validation: (Rule) => Rule.required(),
     },
     {
       name: 'externalUrl',
@@ -75,16 +77,22 @@ export default {
       type: 'date',
       fieldset: 'date',
       options: {
-        dateFormat: 'DD-MM-YYYY',
+        dateFormat: 'DD.MM.YYYY',
       },
-      hidden: ({ parent }) => !parent.externalUrl
+      hidden: ({ parent }) => !parent.externalUrl,
+      validation: Rule => Rule.custom((start, context) => {
+        if (context.parent.externalUrl && !start) {
+          return 'Start date is required when externalUrl is provided';
+        }
+        return true;
+      })
     },
     {
       name: 'end',
       type: 'date',
       fieldset: 'date',
       options: {
-        dateFormat: 'DD-MM-YYYY',
+        dateFormat: 'DD.MM.YYYY',
       },
       hidden: ({ parent }) => !parent.externalUrl
     },
@@ -102,8 +110,9 @@ export default {
               name: 'date',
               type: 'date',
               options: {
-                dateFormat: 'DD-MM-YYYY',
+                dateFormat: 'DD.MM.YYYY',
               },
+              validation: (Rule) => Rule.required(),
             },
             {
               name: 'activities',
@@ -128,7 +137,7 @@ export default {
                       name: 'start',
                       type: 'string',
                       fieldset: 'time',
-                      validation: Rule => Rule.regex(/^([01]\d|2[0-3]):([0-5]\d)$/, {
+                      validation: Rule => Rule.required() && Rule.regex(/^([01]\d|2[0-3]):([0-5]\d)$/, {
                         name: 'HH:MM', // Error message is "Does not match time pattern"
                         invert: false // Boolean to allow any value that does NOT match pattern
                       }),
@@ -145,6 +154,7 @@ export default {
                     {
                       name: 'title',
                       type: 'string',
+                      validation: (Rule) => Rule.required(),
                     },
                     {
                       name: 'label',
@@ -156,8 +166,22 @@ export default {
                       type: 'url',
                       fieldset: 'link',
                     },
-                  ]
-                }
+                  ],
+                  preview: {
+                    select: {
+                      title: 'title',
+                      start: 'start',
+                      end: 'end',
+                    },
+                    prepare(selection) {
+                      const {title, start, end} = selection;
+                      return {
+                        title: title,
+                        subtitle: `${start ? start : ''}${end ? '-' + end : ''}`,
+                      }
+                    }
+                  },
+                },
               ],
             },
           ],
@@ -176,7 +200,7 @@ export default {
       },
     },
     {
-      name: 'name',
+      name: 'location',
       type: 'string',
       fieldset: 'place',
     },
@@ -188,7 +212,37 @@ export default {
     {
       name: 'content',
       type: 'array', 
-      of: [{type: 'block'}]
+      of: [{
+        type: 'block',
+        lists: [],
+        styles: [{title: 'Testo corrente', value: 'normal'},],
+        marks: {
+          annotations: [
+            {
+              name: 'link',
+              type: 'object',
+              title: 'External link',
+              fields: [
+                {
+                  name: 'href',
+                  type: 'url',
+                  title: 'URL'
+                },
+                {
+                  title: 'Open in new tab',
+                  name: 'blank',
+                  description: 'Read https://css-tricks.com/use-target_blank/',
+                  type: 'boolean'
+                }
+              ]
+            },
+          ],
+          decorators: [
+            {title: 'Strong', value: 'strong'},
+            {title: 'Emphasis', value: 'em'},
+          ]
+        },
+      }],
     },
     {
       name: 'cover',
@@ -236,6 +290,32 @@ export default {
       },
     },
   ],
+  orderings: [
+    {
+      title: 'Title AZ',
+      by: [
+        {field: 'title', direction: 'asc'}
+      ]
+    },
+    {
+      title: 'Title ZA',
+      by: [
+        {field: 'title', direction: 'desc'}
+      ]
+    },
+    {
+      title: 'Date (Oldest)',
+      by: [
+        {field: nonNull('start', 'days'), direction: 'asc'}
+      ]
+    },
+    {
+      title: 'Date (Latest)',
+      by: [
+        {field: nonNull('start', 'days'), direction: 'desc'}
+      ]
+    },
+  ],
   preview: {
     select: {
       title: 'title',
@@ -251,7 +331,7 @@ export default {
       if (url) {
         return {
           title: title,
-          subtitle: `${start ? start : ''}${end ? ' - ' + end : ''}`,
+          subtitle: formatDate(start, end),
           media: cover,
         }
       } else {
@@ -260,10 +340,55 @@ export default {
         const lastDate = dates.length > 1 ? dates[dates.length - 1] : '';
         return {
           title: title,
-          subtitle: `${firstDate ? firstDate : ''}${lastDate ? ' - ' + lastDate : ''}`,
+          subtitle: formatDate(firstDate, lastDate),
           media: cover,
         }
       }
     }
+  }
+}
+
+function nonNull(a, b) {
+  // Returns first nonNull argument
+  if (a) {
+    return a
+  }
+  if (b[0]) {
+    return b[0].date
+  }
+  return ''
+}
+
+function formatDate(date1, date2) {
+  // Parse the input dates
+  let d1, d2;
+  if (date1) {
+    d1 = date1 ? new Date(date1) : '';
+  } else {
+    return {}
+  }
+  if (date2) {
+    d2 = date2 ? new Date(date2) : new Date(date1);
+  } else {
+    const day1 = d1.getDate().toString().padStart(2, '0');
+    const month1 = (d1.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+    const year1 = d1.getFullYear();
+    return `${day1}.${month1}.${year1}`;
+  }
+
+  // Extract the parts of the dates
+  const day1 = d1.getDate().toString().padStart(2, '0');
+  const month1 = (d1.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+  const year1 = d1.getFullYear();
+
+  const day2 = d2.getDate().toString().padStart(2, '0');
+  const month2 = (d2.getMonth() + 1).toString().padStart(2, '0');
+  const year2 = d2.getFullYear();
+
+  // Check if month and year are the same
+  if (year1 === year2 && month1 === month2) {
+    return `${day1}-${day2}.${month1}.${year1}`;
+  } else {
+    return `${day1}.${month1}.${year1}-${day2}.${month2}.${year2}`;
   }
 }

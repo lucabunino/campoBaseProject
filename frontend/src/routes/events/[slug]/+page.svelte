@@ -4,7 +4,8 @@ const { data } = $props()
 const item = data.item[0]
 
 import { urlFor } from "$lib/utils/image.js";
-import Wysiwyg from "$lib/components/Wysiwyg.svelte";
+import { PortableText } from '@portabletext/svelte'
+import PortableTextStyle from '$lib/components/portableTextStyle.svelte'
 import { formatDate } from "$lib/utils/date.js";
 import { register } from 'swiper/element/bundle';
 register();
@@ -34,11 +35,21 @@ colorer.changeSecondaryColor('#FF6B6B');
   {/if}
   <div id="info">
     <p class="date font-m">{formatDate(item.start, item.end)}</p>
-    {#if item.name}<a class="place font-m" href={item.googleMaps} target="_blank">{item.name}</a>{/if}
+    {#if item.location}<a class="place font-m" href={item.googleMaps} target="_blank">{item.location}</a>{/if}
   </div>
   {#if item.content}
     <div id="content">
-      <Wysiwyg blocks={item.content}/>
+      <PortableText
+      value={item.content}
+      components={{
+        block: {
+          normal: PortableTextStyle,
+        },
+        marks: {
+          link: PortableTextStyle,
+        },
+      }}
+      />
     </div>
   {/if}
 </section>
@@ -78,6 +89,10 @@ swiper-slide {
 swiper-slide img {
   width: 100%;
   display: block;
+}
+#content {
+  padding: .3em 0;
+  border-bottom: solid 1px #000;
 }
 #info {
   display: flex;

@@ -5,6 +5,7 @@ export default {
     {
       name: 'title',
       type: 'string',
+      validation: (Rule) => Rule.required(),
     },
     {
       name: 'slug',
@@ -17,32 +18,39 @@ export default {
     },
     {
       name: 'content',
-      type: 'array', 
+      type: 'array',
+      validation: (Rule) => Rule.required(),
       of: [
         {
           type: 'block',
+          lists: [],
+          styles: [{title: 'Testo corrente', value: 'normal'},],
           marks: {
-              annotations: [
-                {
-                  name: 'link',
-                  type: 'object',
-                  title: 'External link',
-                  fields: [
-                    {
-                      name: 'href',
-                      type: 'url',
-                      title: 'URL'
-                    },
-                    {
-                      title: 'Open in new tab',
-                      name: 'blank',
-                      description: 'Read https://css-tricks.com/use-target_blank/',
-                      type: 'boolean'
-                    }
-                  ]
-                },
-              ]
-            },
+            annotations: [
+              {
+                name: 'link',
+                type: 'object',
+                title: 'External link',
+                fields: [
+                  {
+                    name: 'href',
+                    type: 'url',
+                    title: 'URL'
+                  },
+                  {
+                    title: 'Open in new tab',
+                    name: 'blank',
+                    description: 'Read https://css-tricks.com/use-target_blank/',
+                    type: 'boolean'
+                  }
+                ]
+              },
+            ],
+            decorators: [
+              {title: 'Strong', value: 'strong'},
+              {title: 'Emphasis', value: 'em'},
+            ]
+          },
         }
       ]
     },

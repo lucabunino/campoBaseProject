@@ -4,7 +4,8 @@ const { data } = $props()
 const item = data.item[0]
 
 import { urlFor } from "$lib/utils/image.js";
-import Wysiwyg from "$lib/components/Wysiwyg.svelte";
+import { PortableText } from '@portabletext/svelte'
+import PortableTextStyle from '$lib/components/portableTextStyle.svelte'
 import { formatDate } from "$lib/utils/date.js";
 import { register } from 'swiper/element/bundle';
 import { slide, fade } from "svelte/transition";
@@ -67,6 +68,21 @@ function toggleDay(dayIndex, event) {
   {:else}
     <img class="cover" src={urlFor(item.cover)} alt="Image for {item.title}">
   {/if}
+  {#if item.content}
+    <div id="content">
+      <PortableText
+      value={item.content}
+      components={{
+        block: {
+          normal: PortableTextStyle,
+        },
+        marks: {
+          link: PortableTextStyle,
+        },
+      }}
+      />
+    </div>
+  {/if}
   {#each item.days as day, i}
     <h3 class="day font-l" onkeyup={(e) => toggleDay(i)} onclick={(e) => toggleDay(i, e)}>{Intl.DateTimeFormat('it-IT', { weekday: 'long' }).format(new Date(day.date))}</h3>
     {#each day.activities as activity, j}
@@ -97,7 +113,6 @@ function toggleDay(dayIndex, event) {
       {/if}
     {/each}
   {/each}
-  <Wysiwyg blocks={item.content}/>
 </section>
 
 <style>
@@ -149,6 +164,10 @@ swiper-slide {
 swiper-slide img {
   width: 100%;
   display: block;
+}
+#content {
+  padding: .3em 0;
+  border-bottom: solid 1px #000;
 }
 .day {
   padding: .3em 0;

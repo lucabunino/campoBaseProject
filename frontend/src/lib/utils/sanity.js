@@ -169,6 +169,8 @@ export async function getFestival(slug) {
 			background,
 			hover,
 			backgroundImage,
+			location,
+			googleMaps,
 		}
 		`,
 		{
@@ -206,8 +208,8 @@ export async function getEvent(slug) {
 					'aspectRatio': asset->metadata.dimensions.aspectRatio,
 			},
 			content,
-			name,
-			googleMaps
+			location,
+			googleMaps,
 		}
 		`,
 		{

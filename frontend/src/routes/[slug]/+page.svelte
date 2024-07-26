@@ -3,7 +3,8 @@
 const { data } = $props()
 
 // Import from svelte/lib
-import Wysiwyg from '$lib/components/Wysiwyg.svelte'
+import { PortableText } from '@portabletext/svelte'
+import PortableTextStyle from '$lib/components/portableTextStyle.svelte'
 
 // Import stores
 import { getColor } from '$lib/stores/color.svelte.js';
@@ -14,7 +15,21 @@ colorer.changeSecondaryColor('#FF6B6B');
 
 <h1>{data.about[0].title}</h1>
 <section>
-  <Wysiwyg blocks={data.about[0].content}/>
+  {#if data.about[0].content}
+    <div id="content">
+      <PortableText
+      value={data.about[0].content}
+      components={{
+        block: {
+          normal: PortableTextStyle,
+        },
+        marks: {
+          link: PortableTextStyle,
+        },
+      }}
+      />
+    </div>
+  {/if}
 </section>
 
 <style>
