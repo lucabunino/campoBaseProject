@@ -81,7 +81,7 @@ onMount(() => {
             <a href="/{data.about[0].slug.current}" onclick={(e) => menuOpen = false} class:active={$page.url.pathname === `/${data.about[0].slug.current}`}>{data.about[0].title}</a>
           </li>
           <li class="menu-item last">
-            <a href="https://www.instagram.com/projectcampobase" target="_blank">Insta</a>
+            <a href="https://www.instagram.com/projectcampobase" target="_blank">Instagram</a>
           </li>
         </ul>
         <button id="menuSwitch" onclick={(e) => menuOpen = !menuOpen}>{!menuOpen ? 'Menu' : 'X'}</button>
@@ -196,6 +196,7 @@ onMount(() => {
   padding: 3.5em var(--gutter);
   text-align: left;
   overflow-y: scroll;
+  z-index: 3;
 }
 #menu.open {
   transform: translateX(0);
