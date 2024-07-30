@@ -2,13 +2,13 @@
 // Import data
 const { data } = $props()
 const item = data.item[0]
-$inspect(item)
 
 import { urlFor } from "$lib/utils/image.js";
 import { PortableText } from '@portabletext/svelte'
 import PortableTextStyle from '$lib/components/portableTextStyle.svelte'
 import { formatDate, formatTime } from "$lib/utils/date.js";
 import { register } from 'swiper/element/bundle';
+import { onMount } from 'svelte';
 register();
 
 // Import stores
@@ -16,6 +16,30 @@ import { getColor } from '$lib/stores/color.svelte.js';
 const colorer = getColor();
 colorer.changePrimaryColor('#8A7369');
 colorer.changeSecondaryColor('#FF6B6B');
+
+$effect(() => {
+  if (item.sponsors && item.sponsors.length > 3) {
+    Marquee('.marquee', 0.4) 
+  }
+});
+
+// Functions
+function Marquee(selector, speed) {
+  const parentSelector = document.querySelector(selector);
+  const clone = parentSelector.innerHTML;
+  const firstElement = parentSelector.children[0];
+  let i = 0;
+  parentSelector.insertAdjacentHTML('beforeend', clone);
+  parentSelector.insertAdjacentHTML('beforeend', clone);
+
+  setInterval(function () {
+    firstElement.style.marginLeft = `-${i}px`;
+    if (i > firstElement.clientWidth) {
+      i = 0;
+    }
+    i = i + speed;
+  }, 0);
+}
 </script>
 
 <h1>{item.title}
@@ -31,28 +55,67 @@ colorer.changeSecondaryColor('#FF6B6B');
         </swiper-slide>
       {/each}
     </swiper-container>
-  {:else}
-    <img class="cover" src={urlFor(item.cover)} alt="Image for {item.title}">
-  {/if}
-  <div id="info">
-    <p class="datetime font-s">{formatDate(item.start, item.end)}<br>{formatTime(item.start, item.end)}</p>
-    {#if item.location}<a class="place font-s" href={item.googleMaps} target="_blank">@{item.location}</a>{/if}
-  </div>
-  {#if item.content}
-    <div id="content">
-      <PortableText
-      value={item.content}
-      components={{
-        block: {
-          normal: PortableTextStyle,
-        },
-        marks: {
-          link: PortableTextStyle,
-        },
-      }}
-      />
+    {:else}
+      <img class="cover" src={urlFor(item.cover)} alt="Image for {item.title}">
+    {/if}
+  <div>
+    <div id="info">
+      <p class="datetime font-s">{formatDate(item.start, item.end)}{#if !item.time}<br>{formatTime(item.start, item.end)}{/if}</p>
+      {#if item.location}<a class="place font-s" href={item.googleMaps} target="_blank">@{item.location}</a>{/if}
+      {#if item.price}
+        <div class="price">
+          <p class="price-value font-s">Evento a pagamento {item.price.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
+          {#if item.buyUrl}
+            <a class="price-url font-xs" href={item.buyUrl} target="_blank">Acquista qui</a>
+          {:else if item.reservationUrl}
+            <a class="price-url font-xs" href={item.reservationUrl} target="_blank">Iscriviti qui</a>
+          {/if}
+        </div>
+      {:else}
+        <div class="price">
+          <p class="price-value font-s">Evento gratuito{#if item.reservationUrl}{@html ' previa iscrizione'}{/if}</p>
+          {#if item.reservationUrl}<a class="price-url font-xs" href={item.reservationUrl}>Iscriviti qui</a>{/if}
+        </div>
+      {/if}
     </div>
-  {/if}
+    {#if item.content}
+      <div id="content">
+        <PortableText
+        value={item.content}
+        components={{
+          block: {
+            normal: PortableTextStyle,
+          },
+          marks: {
+            link: PortableTextStyle,
+          },
+        }}
+        />
+      </div>
+    {/if}
+    {#if item.sponsors}
+      <div id="sponsors">
+        <h4 class="font-s">Sponsored by</h4>
+        {#if item.sponsors.length > 3}
+        <div class="marquee">
+          <div class="marquee-content">
+            {#each item.sponsors as sponsor, i}
+              <img class="logo" src={sponsor.url} alt="Sponsor of {item.title}">
+            {/each}
+          </div>
+        </div>
+        {:else}
+        <div class="marquee">
+          <div class="marquee-content">
+            {#each item.sponsors as sponsor, i}
+              <img class="logo" src={sponsor.url} alt="Sponsor of {item.title}">
+            {/each}
+          </div>
+        </div>
+        {/if}
+      </div>
+    {/if}
+  </div>
 </section>
 
 <style>
@@ -63,8 +126,7 @@ h1  {
   z-index: 2;
 }
 section {
-  border-top: solid 1px #000;
-  /* margin-top: 5.86em; */
+  border-bottom: solid 1px #000;
   width: 100%;
 }
 
@@ -78,7 +140,7 @@ swiper-container {
   width: calc(100vw - 16.146vw*2);
   width: -webkit-fill-available;
   height: auto;
-  padding: .5em 0;
+  padding: 0 0 .5em;
   border-bottom: solid 1px #000;
   display: block;
 }
@@ -89,15 +151,11 @@ swiper-slide img {
   width: 100%;
   display: block;
 }
-#content {
-  padding: .3em 0;
-  border-bottom: solid 1px #000;
-}
 #info {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   padding: .5em 0;
-  border-bottom: solid 1px #000;
 }
 .datetime {
   text-align: left;
@@ -105,9 +163,43 @@ swiper-slide img {
 .place {
   text-align: right;
 }
+.price {
+  flex-basis: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.price-value {
+  text-align: left;
+}
+.price-url {
+  text-align: right;
+}
 #content {
+  flex-basis: 100%;
   padding: .3em 0;
-  border-bottom: solid 1px #000;
+}
+#info + #content {
+  padding: .8em 0 .3em;
+}
+#sponsors {
+  border-top: solid 1px #000;
+  text-align: left;
+}
+#sponsors h4 {
+  padding: .5em 0 2em;
+}
+#sponsors .marquee {
+  overflow: hidden;
+  display: flex;
+  padding: 0 0 .5em;
+}
+#sponsors .marquee-content {
+  display: flex;
+}
+#sponsors .logo {
+  height: .7em;
+  margin-right: 1em;
 }
 @media screen and (max-width: 1080px) {
   #info {
@@ -119,10 +211,10 @@ swiper-slide img {
   #info {
     flex-direction: column;
   }
-  .datetime {
-    text-align: center;
-  }
-  .place {
+  .datetime,
+  .place,
+  .price-value,
+  .price-url {
     text-align: center;
   }
 }

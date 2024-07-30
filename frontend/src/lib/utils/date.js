@@ -25,7 +25,9 @@ export function formatDate(date1, date2) {
   const year2 = d2.getFullYear();
 
   // Check if month and year are the same
-  if (year1 === year2 && month1 === month2) {
+  if (day1 === day2 && year1 === year2 && month1 === month2) {
+    return `${day1}.${month1}.${year1}`;
+  } else if (year1 === year2 && month1 === month2) {
     return `${day1}-${day2}.${month1}.${year1}`;
   } else {
     return `${day1}.${month1}.${year1}-${day2}.${month2}.${year2}`;

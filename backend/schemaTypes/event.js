@@ -138,17 +138,24 @@ export default {
       type: 'number',
       fieldset: 'priceAndReservation',
       group: 'details',
+      validation: Rule => Rule.precision(2).positive(),
     },
     {
-      name: 'reservationRequired',
-      type: 'boolean',
+      name: 'buyUrl',
+      type: 'url',
       fieldset: 'priceAndReservation',
+      validation: Rule => Rule.uri({
+        scheme: ['http', 'https', 'mailto', 'tel']
+      }),
       group: 'details',
     },
     {
       name: 'reservationUrl',
       type: 'url',
       fieldset: 'priceAndReservation',
+      validation: Rule => Rule.uri({
+        scheme: ['http', 'https', 'mailto', 'tel']
+      }),
       group: 'details',
     },
     {
@@ -188,7 +195,7 @@ export default {
       }]
     },
     {
-      name: 'sponsoredBy',
+      name: 'sponsors',
       type: 'array',
       group: 'details',
       of: [
@@ -249,7 +256,7 @@ function formatDate(date1, date2) {
   if (date1) {
     d1 = date1 ? new Date(date1) : '';
   } else {
-    return {}
+    return ''
   }
   if (date2) {
     d2 = date2 ? new Date(date2) : new Date(date1);
@@ -270,7 +277,9 @@ function formatDate(date1, date2) {
   const year2 = d2.getFullYear();
 
   // Check if month and year are the same
-  if (year1 === year2 && month1 === month2) {
+  if (day1 === day2 && year1 === year2 && month1 === month2) {
+    return `${day1}.${month1}.${year1}`;
+  } else if (year1 === year2 && month1 === month2) {
     return `${day1}-${day2}.${month1}.${year1}`;
   } else {
     return `${day1}.${month1}.${year1}-${day2}.${month2}.${year2}`;

@@ -25,17 +25,13 @@ let pageHeight = $state()
 let sectionHeight = $state()
 let contentHeight = $derived(pageHeight + sectionHeight)
 let openDay = $state(undefined)
-let bgReady = $state(false);
 let stickerNumber = $state(1);
 let string = $derived("../stickers/cbp-adamello-stickers-" + stickerNumber + ".webp");
 let stickers = $state();
 
-onMount(() => {
-  setTimeout(() => {
-    bgReady = true
-  }, 500);
-  if (data.pathname === "/festivals/campo-base-festival-adamello") {
-    setInterval(() => {
+$effect(() => {
+  const timer = setInterval(() => {
+    if (data.pathname === "/festivals/campo-base-festival-adamello") {
       const img = document.createElement("img");
       img.src = string;
       const left = Math.floor(Math.random() * innerWidth);
@@ -47,9 +43,10 @@ onMount(() => {
       if (stickerNumber > 7) {
         stickerNumber = 1
       }
-    }, 1500);
-  }
-})
+    }
+  }, 1500);
+  return () => clearInterval(timer);
+});
 
 // Functions
 function toggleDay(dayIndex, event) {
@@ -75,19 +72,8 @@ function toggleDay(dayIndex, event) {
 </h1>
 <!-- <section bind:clientHeight={sectionHeight} class={item._type} style={item.subtitle ? 'margin-top: 9.26em;' : 'margin-top: 7.06em;'}> -->
 <section bind:clientHeight={sectionHeight} class={item._type}>
-  {#if item.slider}
-    <swiper-container>
-      {#each item.slider as slide}
-        <swiper-slide>
-          <img src={urlFor(slide)} alt="Image for {item.title}">
-        </swiper-slide>
-      {/each}
-    </swiper-container>
-  {:else}
-    <img class="cover" src={urlFor(item.cover)} alt="Image for {item.title}">
-  {/if}
   {#if item.content}
-    <div id="content">
+    <div id="content" class="font-m">
       <PortableText
       value={item.content}
       components={{
@@ -100,6 +86,17 @@ function toggleDay(dayIndex, event) {
       }}
       />
     </div>
+  {/if}
+  {#if item.slider}
+    <swiper-container>
+      {#each item.slider as slide}
+        <swiper-slide>
+          <img src={urlFor(slide)} alt="Image for {item.title}">
+        </swiper-slide>
+      {/each}
+    </swiper-container>
+  {:else}
+    <img class="cover" src={urlFor(item.cover)} alt="Image for {item.title}">
   {/if}
   {#each item.days as day, i}
     <h3 class="day font-l" onkeyup={(e) => toggleDay(i)} onclick={(e) => toggleDay(i, e)}>{Intl.DateTimeFormat('it-IT', { weekday: 'long' }).format(new Date(day.date))}</h3>
@@ -131,6 +128,28 @@ function toggleDay(dayIndex, event) {
       {/if}
     {/each}
   {/each}
+  {#if item.sponsors}
+      <div id="sponsors">
+        <h4 class="font-s">Sponsored by</h4>
+        {#if item.sponsors.length > 3}
+        <div class="marquee">
+          <div class="marquee-content">
+            {#each item.sponsors as sponsor, i}
+              <img class="logo" src={sponsor.url} alt="Sponsor of {item.title}">
+            {/each}
+          </div>
+        </div>
+        {:else}
+        <div class="marquee">
+          <div class="marquee-content">
+            {#each item.sponsors as sponsor, i}
+              <img class="logo" src={sponsor.url} alt="Sponsor of {item.title}">
+            {/each}
+          </div>
+        </div>
+        {/if}
+      </div>
+    {/if}
 </section>
 
 {#if data.pathname === "/festivals/campo-base-festival-adamello"}
@@ -187,7 +206,6 @@ swiper-slide img {
 }
 #content {
   padding: .3em 0;
-  border-bottom: solid 1px #000;
 }
 .day {
   padding: .3em 0;
@@ -209,6 +227,25 @@ swiper-slide img {
 }
 .label {
   text-align: right;
+}
+#sponsors {
+  border-top: solid 1px #000;
+  text-align: left;
+}
+#sponsors h4 {
+  padding: .5em 0 2em;
+}
+#sponsors .marquee {
+  overflow: hidden;
+  display: flex;
+  padding: 0 0 .5em;
+}
+#sponsors .marquee-content {
+  display: flex;
+}
+#sponsors .logo {
+  height: .7em;
+  margin-right: 1em;
 }
 #stickers {
   display: contents;

@@ -4,6 +4,7 @@ const { data } = $props()
 
 // Import from svelte/lib
 import { urlFor } from "$lib/utils/image.js";
+import { formatDate, formatTime } from "$lib/utils/date.js";
 
 // Import stores
 import { getColor } from '$lib/stores/color.svelte.js';
@@ -13,19 +14,63 @@ colorer.changeSecondaryColor('#CCBFAA');
 
 // Variables
 let h1Height = $state()
+let lang = $state('it')
 </script>
 
 <h1 bind:clientHeight={h1Height}>{data.homepage[0].title}</h1>
 <section>
   {#each  data.homepage[0].whatsOn as item, i}
-    <a href={item._type === 'event' ? '/events/' + item.slug.current : '/festivals/' + item.slug.current}>
-      <h2>{item.title}</h2>
-      {#if item.cover}
-        <img class="cover" src={urlFor(item.cover).width(1280)} alt="">
-      {:else}
-        <p class="cover">Missing image</p>
+    <div class="item">
+      <a href={item._type === 'event' ? '/events/' + item.slug.current : '/festivals/' + item.slug.current}>
+        {#if item.cover}
+          <img class="cover" src={urlFor(item.cover).width(1280)} alt="">
+        {:else}
+          <p class="cover">Missing image</p>
+        {/if}
+        <h2>{item.title}{item.subtitle ? ' ' + item.subtitle : ''}</h2>
+      </a>
+      <div id="info">
+        {#if item._type == 'event' && item.start}
+          <p class="datetime font-s">{formatDate(item.start, item.end)}{#if !item.time}<br>{formatTime(item.start, item.end)}{/if}</p>
+        {:else if item.days}
+          <p class="datetime font-s">{formatDate(item.days[0].date, item.days[item.days.length - 1].date)}</p>
+        {/if}
+        {#if item.location}<a class="place font-s" href={item.googleMaps} target="_blank">@{item.location}</a>{/if}
+        {#if item.project.description}
+          <p class="project-description font-s">{item.project.description[lang]}</p>
+        {/if}
+        {#if item.price}
+          <div class="price">
+            <p class="price-value font-s">Evento a pagamento {item.price.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
+            {#if item.buyUrl}
+              <a class="price-url font-xs" href={item.buyUrl} target="_blank">Acquista qui</a>
+            {:else if item.reservationUrl}
+              <a class="price-url font-xs" href={item.reservationUrl} target="_blank">Iscriviti qui</a>
+            {/if}
+          </div>
+        {:else}
+          <div class="price">
+            <p class="price-value font-s">Evento gratuito{#if item.reservationUrl}{@html ' previa iscrizione'}{/if}</p>
+            {#if item.reservationUrl}<a class="price-url font-xs" href={item.reservationUrl}>Iscriviti qui</a>{/if}
+          </div>
+        {/if}
+      </div>
+      {#if item.content}
+        <div id="content">
+          <PortableText
+          value={item.content}
+          components={{
+            block: {
+              normal: PortableTextStyle,
+            },
+            marks: {
+              link: PortableTextStyle,
+            },
+          }}
+          />
+        </div>
       {/if}
-    </a>
+    </div>
   {/each}
 </section>
 <style>
@@ -36,23 +81,22 @@ h1  {
   z-index: 1;
 }
 section {
-  border-top: solid 1px #000;
-  /* margin-top: 5.86em; */
   width: 100%;
 }
 
 /* Content */
+.item {
+  margin-bottom: 1.2em;
+  border-bottom: solid 1px #000;
+}
 a {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: .9em;
-  border-bottom: solid 1px #000;
 }
 h2 {
   padding: .3em 0;
-  border-bottom: solid 1px #000;
-  margin-bottom: .4em;
+  border-top: solid 1px #000;
   width: 100%;
 }
 .cover {
@@ -60,12 +104,42 @@ h2 {
   height: auto;
   aspect-ratio: 1;
   object-fit: contain;
+  padding-bottom: .5em;
 }
 p.cover {
   background-color: #EEE;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+#info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: .3em 0;
+  border-top: solid 1px #000;
+}
+.datetime {
+  text-align: left;
+}
+.place {
+  text-align: right;
+}
+.project-description {
+  display: block;
+  padding: 2em 0;
+}
+.price {
+  flex-basis: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.price-value {
+  text-align: left;
+}
+.price-url {
+  text-align: right;
 }
 @media screen and (max-width: 1080px) {
   .cover {

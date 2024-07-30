@@ -1,6 +1,7 @@
 <script>
 // Import data
 const { data } = $props()
+$inspect(data)
 
 // Import from svelte/lib
 import { urlFor } from "$lib/utils/image.js";
@@ -16,6 +17,7 @@ colorer.changeSecondaryColor('#3873D1');
 // Variables
 let openProject = $state(undefined)
 let scrollY = $state()
+let lang = $state('it')
 
 // Functions
 function toggleProject(projectIndex, event) {
@@ -33,41 +35,46 @@ function toggleProject(projectIndex, event) {
 <h1>Projects</h1>
 <section>
   {#each data.projects as project, i}
-    {#if project[1].length === 1}
-      <a class="project" href={project[1][0]._type === 'event' ? '/events/' + project[1][0].slug.current : '/festivals/' + project[1][0].slug.current}><h3>{project[1][0].title}</h3></a>
+    {#if project[2].length === 1}
+      <a class="project single" href={project[2][0]._type === 'event' ? '/events/' + project[2][0].slug.current : '/festivals/' + project[2][0].slug.current}><h3>{project[2][0].title}</h3></a>
     {:else}
       <div class="project" data-project={i}>
         <h3 onkeyup={(e) => toggleProject(i)} onclick={(e) => toggleProject(i, e)}>{project[0]}</h3>
-          {#each project[1] as item, j}
-              {#if item.externalUrl}
-                {#if openProject === i}
-                  <a class="project-item font-m" href={item.externalUrl} target="_blank"
-                  transition:slide={{ duration: 500 }}>
-                    <img src={urlFor(item.cover).width(800)} alt="">
-                    <div class="project-item-text">
-                      <p class="font-s">{formatDate(item.start, item.end)}</p>
-                      <h2>{item.title}{#if item.subtitle}<br>{item.subtitle}{/if}</h2>
-                    </div>
-                  </a>
-                {/if}
-              {:else}
-                {#if openProject === i}
-                  <a class="project-item font-m" href={item._type === 'event' ? '/events/' + item.slug.current : '/festivals/' + item.slug.current}
-                  transition:slide={{ duration: 500 }}
-                  >
-                    <img src={urlFor(item.cover).width(800)} alt="">
-                    <div class="project-item-text">
-                      {#if item._type == 'event' && item.start}
+          {#if project[1] && openProject === i}
+            <p transition:slide={{ duration: 500 }} class="project-description font-s">{project[1][lang]}</p>
+          {/if}
+          <div class="project-expandable">
+            {#each project[2] as item, j}
+                {#if item.externalUrl}
+                  {#if openProject === i}
+                    <a class="project-item font-m" href={item.externalUrl} target="_blank"
+                    transition:slide={{ duration: 500 }}>
+                      <img src={urlFor(item.cover).width(800)} alt="">
+                      <div class="project-item-text">
                         <p class="font-s">{formatDate(item.start, item.end)}</p>
-                      {:else if item.days}
-                        <p class="font-s">{formatDate(item.days[0].date, item.days[item.days.length - 1].date)}</p>
-                      {/if}
-                      <h2>{item.title}{#if item.subtitle}<br>{item.subtitle}{/if}</h2>
-                    </div>
-                  </a>
+                        <h2>{item.title}{#if item.subtitle}<br>{item.subtitle}{/if}</h2>
+                      </div>
+                    </a>
                   {/if}
-              {/if}
-          {/each}
+                {:else}
+                  {#if openProject === i}
+                    <a class="project-item font-m" href={item._type === 'event' ? '/events/' + item.slug.current : '/festivals/' + item.slug.current}
+                    transition:slide={{ duration: 500 }}
+                    >
+                      <img src={urlFor(item.cover).width(800)} alt="">
+                      <div class="project-item-text">
+                        {#if item._type == 'event' && item.start}
+                          <p class="font-s">{formatDate(item.start, item.end)}</p>
+                        {:else if item.days}
+                          <p class="font-s">{formatDate(item.days[0].date, item.days[item.days.length - 1].date)}</p>
+                        {/if}
+                        <h2>{item.title}{#if item.subtitle}<br>{item.subtitle}{/if}</h2>
+                      </div>
+                    </a>
+                    {/if}
+                {/if}
+            {/each}
+          </div>
       </div>
     {/if}
   {/each}
@@ -92,7 +99,6 @@ h3, .project-item {
   cursor: pointer;
   padding: .3em 0;
   width: 100%;
-  border-bottom: solid 1px #000;
 }
 h3:hover {
   color: var(--secondaryColor);
@@ -100,8 +106,18 @@ h3:hover {
 .project {
   display: block;
 }
+.project.single {
+  border-bottom: solid 1px #000;
+}
 .project.open {
   height: auto;
+}
+.project-expandable {
+  border-top: solid 1px #000;
+}
+.project-description {
+  display: block;
+  padding: 1em 0 .5em
 }
 .project-item {
   display: grid;

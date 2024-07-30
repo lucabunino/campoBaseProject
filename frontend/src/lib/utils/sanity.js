@@ -36,7 +36,8 @@ export async function getHomepage() {
 					current
 				},
 				project->{
-					title
+					title,
+					description
 				},
 				cover {
 					asset {
@@ -46,6 +47,16 @@ export async function getHomepage() {
 					'width': asset->metadata.dimensions.width,
 					'aspectRatio': asset->metadata.dimensions.aspectRatio,
 				},
+				start,
+				end,
+				time,
+				days,
+				price,
+				reservationUrl,
+				buyUrl,
+				location,
+				googleMaps,
+				sponsors,
 			}
 		}
 		`
@@ -78,7 +89,8 @@ export async function getEvents() {
 			},
 			project->{
 				orderRank,
-				title
+				title,
+				description
 			},
 			start,
 			end,
@@ -124,7 +136,8 @@ export async function getFestivals() {
 			},
 			project->{
 				orderRank,
-				title
+				title,
+				description
 			},
 			start,
 			end,
@@ -173,6 +186,9 @@ export async function getFestival(slug) {
 			backgroundImage,
 			location,
 			googleMaps,
+			sponsors [] {
+				'url': asset->url
+			}
 		}
 		`,
 		{
@@ -214,10 +230,11 @@ export async function getEvent(slug) {
 			location,
 			googleMaps,
 			price,
-			reservationRequired,
 			reservationUrl,
-			reservationContact,
-			sponsoredBy
+			buyUrl,
+			sponsors [] {
+				'url': asset->url
+			}
 		}
 		`,
 		{

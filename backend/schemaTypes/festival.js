@@ -9,12 +9,22 @@ export default {
   icon: SparklesIcon,
   groups: [
     {
+      name: 'basics',
+    },
+    {
       name: 'media',
+    },
+    {
+      name: 'details',
     },
   ],
   fieldsets: [
     {
       name: 'date',
+      options: { columns: 2 },
+    },
+    {
+      name: 'priceAndReservation',
       options: { columns: 2 },
     },
     {
@@ -35,10 +45,12 @@ export default {
       name: 'title',
       type: 'string',
       validation: (Rule) => Rule.required(),
+      group: 'basics',
     },
     {
       name: 'subtitle',
       type: 'string',
+      group: 'basics',
     },
     {
       name: 'slug',
@@ -48,29 +60,80 @@ export default {
         source: 'title',
         maxLength: 96,
       },
+      group: 'basics',
     },
     {
       name: 'featuredMenu',
       title: 'Menu',
       type: 'boolean',
-      fieldset: 'featured'
+      fieldset: 'featured',
+      group: 'basics',
     },
     {
       name: 'featuredProject',
       title: 'Projects',
       type: 'boolean',
-      fieldset: 'featured'
+      fieldset: 'featured',
+      group: 'basics',
     },
     {
       name: 'project',
       type: 'reference',
       to: [{type: 'project'}],
       validation: (Rule) => Rule.required(),
+      group: 'basics',
     },
     {
       name: 'externalUrl',
       description: 'Adding this field adds an external link from Projects, bypassing the single page',
       type: 'url',
+      group: 'basics',
+    },
+    {
+      name: 'cover',
+      type: 'image',
+      group: 'media',
+      validation: (Rule) => Rule.required(),
+    },
+    {
+      name: 'background',
+      type: 'color',
+      options: {
+        disableAlpha: true
+      },
+      fieldset: 'color',
+      group: 'media',
+    },
+    {
+      name: 'hover',
+      type: 'color',
+      options: {
+        disableAlpha: true
+      },
+      fieldset: 'color',
+      group: 'media',
+    },
+    {
+      name: 'backgroundImage',
+      type: 'image',
+      group: 'media',
+    },
+    {
+      name: 'slider',
+      type: 'array',
+      group: 'media',
+      of: [
+        {
+          name: 'slide',
+          type: 'image',
+        },
+      ],
+      preview: {
+        select: {
+          title: 'title',
+          media: 'slide',
+        },
+      },
     },
     {
       name: 'start',
@@ -85,7 +148,8 @@ export default {
           return 'Start date is required when externalUrl is provided';
         }
         return true;
-      })
+      }),
+      group: 'details',
     },
     {
       name: 'end',
@@ -94,7 +158,8 @@ export default {
       options: {
         dateFormat: 'DD.MM.YYYY',
       },
-      hidden: ({ parent }) => !parent.externalUrl
+      hidden: ({ parent }) => !parent.externalUrl,
+      group: 'details',
     },
     {
       name: 'days',
@@ -198,16 +263,44 @@ export default {
           media: 'slide',
         },
       },
+      group: 'details',
     },
     {
       name: 'location',
       type: 'string',
       fieldset: 'place',
+      group: 'details',
     },
     {
       name: 'googleMaps',
       type: 'url',
       fieldset: 'place',
+      group: 'details',
+    },
+    {
+      name: 'price',
+      type: 'number',
+      fieldset: 'priceAndReservation',
+      group: 'details',
+      validation: Rule => Rule.precision(2).positive(),
+    },
+    {
+      name: 'buyUrl',
+      type: 'url',
+      fieldset: 'priceAndReservation',
+      validation: Rule => Rule.uri({
+        scheme: ['http', 'https', 'mailto', 'tel']
+      }),
+      group: 'details',
+    },
+    {
+      name: 'reservationUrl',
+      type: 'url',
+      fieldset: 'priceAndReservation',
+      validation: Rule => Rule.uri({
+        scheme: ['http', 'https', 'mailto', 'tel']
+      }),
+      group: 'details',
     },
     {
       name: 'content',
@@ -243,52 +336,18 @@ export default {
           ]
         },
       }],
+      group: 'details',
     },
     {
-      name: 'cover',
-      type: 'image',
-      group: 'media',
-      validation: (Rule) => Rule.required(),
-    },
-    {
-      name: 'background',
-      type: 'color',
-      options: {
-        disableAlpha: true
-      },
-      fieldset: 'color',
-      group: 'media',
-    },
-    {
-      name: 'hover',
-      type: 'color',
-      options: {
-        disableAlpha: true
-      },
-      fieldset: 'color',
-      group: 'media',
-    },
-    {
-      name: 'backgroundImage',
-      type: 'image',
-      group: 'media',
-    },
-    {
-      name: 'slider',
+      name: 'sponsors',
       type: 'array',
-      group: 'media',
+      group: 'details',
       of: [
         {
-          name: 'slide',
-          type: 'image',
+          name: 'sponsor',
+          type: 'file',
         },
-      ],
-      preview: {
-        select: {
-          title: 'title',
-          media: 'slide',
-        },
-      },
+      ]
     },
   ],
   orderings: [
@@ -387,7 +446,9 @@ function formatDate(date1, date2) {
   const year2 = d2.getFullYear();
 
   // Check if month and year are the same
-  if (year1 === year2 && month1 === month2) {
+  if (day1 === day2 && year1 === year2 && month1 === month2) {
+    return `${day1}.${month1}.${year1}`;
+  } else if (year1 === year2 && month1 === month2) {
     return `${day1}-${day2}.${month1}.${year1}`;
   } else {
     return `${day1}.${month1}.${year1}-${day2}.${month2}.${year2}`;
