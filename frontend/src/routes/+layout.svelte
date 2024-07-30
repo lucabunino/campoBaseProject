@@ -7,8 +7,7 @@ import { beforeNavigate, afterNavigate } from '$app/navigation';
 import { page, navigating } from '$app/stores';
 import { urlFor } from '$lib/utils/image';
 import { onMount } from 'svelte'
-import { slide } from 'svelte/transition'
-import { workaround, pageIn, pageOut, loaderIn, loaderOut } from '$lib/utils/transition';
+import { workaround, pageIn, pageOut, loaderOut, newsletterInOut } from '$lib/utils/transition';
 
 // Import stores
 import { getColor } from '$lib/stores/color.svelte.js';
@@ -59,7 +58,7 @@ onMount(() => {
 {/key}
 
 {#if ready}
-  <div style="display:contents; --primaryColor: {colorer.primaryColor};--secondaryColor: {colorer.secondaryColor};--scrollNewsletter: {scrollNewsletter}">
+  <div style="display:contents; --primaryColor: {colorer.primaryColor};--secondaryColor: {colorer.secondaryColor};">
     <div id="bg"></div>
     <header>
       <a href="/" id="logo" onclick={(e) => menuOpen = false}>
@@ -73,11 +72,11 @@ onMount(() => {
             <a href="/" onclick={(e) => menuOpen = false} class:active={$page.url.pathname === "/"}>{data.homepage[0].title}</a>
           </li>
           <li class="menu-item">
-            <a href="/format" onclick={(e) => menuOpen = false} class:active={$page.url.pathname === "/format"}>Format</a>
+            <a href="/projects" onclick={(e) => menuOpen = false} class:active={$page.url.pathname === "/projects"}>Projects</a>
           </li>
           {#each data.festivalsMenu as festival, i}
             <li class="menu-item">
-              <a href="/festivals/{festival.slug.current}" onclick={(e) => menuOpen = false} class:active={$page.url.pathname === `/festivals/${festival.slug.current}`}>{festival.title}</a>
+              <a href={festival.externalUrl ? festival.externalUrl : `/festivals/${festival.slug.current}`} onclick={(e) => menuOpen = false} class:active={$page.url.pathname === `/festivals/${festival.slug.current}`}>{festival.title}{festival.subtitle ? ' ' + festival.subtitle : ''}</a>
             </li>
           {/each}
           <li class="menu-item">
@@ -90,33 +89,36 @@ onMount(() => {
         <button id="menuSwitch" onclick={(e) => menuOpen = !menuOpen}>{!menuOpen ? 'Menu' : 'X'}</button>
       </nav>
     </header>
-    <div id="newsletter" bind:clientHeight={newsletterHeight} class="font-m"
-    class:open={newsletterOpen && $page.url.pathname === "/"}
-    style="margin-top: -{scrollNewsletter > newsletterHeight - innerHeight*.2 ? newsletterHeight - innerHeight*.2 : scrollNewsletter}px"
-    >
-      <button class="font-s" id="newsletterSwitch" onclick={(e) => newsletterOpen = !newsletterOpen}>X</button>
-      <h4>Newsletter</h4>
-      <form action="">
-        <div class="form-item">
-          <p class="font-xs">email</p>
-          <input type="email" name="email" placeholder="email@example.com">
-        </div>
-        <div class="form-item">
-          <p class="font-xs">nome</p>
-          <input type="text" name="name" placeholder="Nomen">
-        </div>
-        <div class="form-item">
-          <p class="font-xs">cognome</p>
-          <input type="text" name="surname" placeholder="Nescio">
-        </div>
-        <button class="font-xs submit">submit</button>
-      </form>
-    </div>
+
+    {#if newsletterOpen && $page.url.pathname === "/"}
+      <div id="newsletter" bind:clientHeight={newsletterHeight} class="font-m"
+      transition:newsletterInOut={workaround({ delay: 0, duration: 500, customValue: scrollNewsletter > newsletterHeight - innerHeight*.2 ? newsletterHeight - innerHeight*.2 : scrollNewsletter })}
+      style="{scrollNewsletter > newsletterHeight - innerHeight*.2 ? `margin-top: -${newsletterHeight - innerHeight*.2}px` : `margin-top: -${scrollNewsletter}px;`}"
+      >
+        <button class="font-s" id="newsletterSwitch" onclick={(e) => newsletterOpen = !newsletterOpen}>X</button>
+        <h4>Newsletter</h4>
+        <form action="">
+          <div class="form-item">
+            <p class="font-xs">email</p>
+            <input type="email" name="email" placeholder="email@example.com">
+          </div>
+          <div class="form-item">
+            <p class="font-xs">nome</p>
+            <input type="text" name="name" placeholder="Nomen">
+          </div>
+          <div class="form-item">
+            <p class="font-xs">cognome</p>
+            <input type="text" name="surname" placeholder="Nescio">
+          </div>
+          <button class="font-xs submit">submit</button>
+        </form>
+      </div>
+    {/if}
 
     {#key data.pathname}
       <main
-      in:pageIn={workaround({ delay: 300, duration: 0, marginTop: scrollY })}
-      out:pageOut={workaround({ delay: 0, duration: 300, marginTop: scrollY })}
+      in:pageIn={workaround({ delay: 300, duration: 0, customValue: scrollY })}
+      out:pageOut={workaround({ delay: 0, duration: 300, customValue: scrollY })}
       bind:clientHeight={pageHeight}
       >
       <!-- <main
@@ -206,6 +208,7 @@ onMount(() => {
   background-color: inherit;
   border: inherit;
   cursor: pointer;
+  z-index: 5;
 }
 #menu {
   position: fixed;
@@ -263,18 +266,13 @@ onMount(() => {
   position: fixed;
   top: 70vh;
   right: var(--gutter);
-  transform: translateX(100vw);
-  transition: transform ease-in-out 500ms;
   width: 35vw;
   height: auto;
-  background-color: var(--secondaryColor);
+  background-color: #FF6B6B;
   border: solid 1px #000;
   padding: 1em var(--gutter);
   text-align: left;
   z-index: 4;
-}
-#newsletter.open {
-  transform: translateX(0) translateY(0);
 }
 h4 {
   margin-bottom: 1em;
@@ -322,7 +320,6 @@ h4 {
     bottom: var(--gutter);
     margin: 0 var(--gutter);
     width: -webkit-fill-available;
-    transform: translateX(0) translateY(100vh);
   }
 }
 
@@ -330,7 +327,7 @@ h4 {
 header {
   display: flex;
   justify-content: center;
-  z-index: 2;
+  z-index: 5;
   position: fixed;
   top: 0;
   width: 100%;

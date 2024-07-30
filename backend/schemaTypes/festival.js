@@ -56,20 +56,20 @@ export default {
       fieldset: 'featured'
     },
     {
-      name: 'featuredFormat',
-      title: 'Formats',
+      name: 'featuredProject',
+      title: 'Projects',
       type: 'boolean',
       fieldset: 'featured'
     },
     {
-      name: 'format',
+      name: 'project',
       type: 'reference',
-      to: [{type: 'format'}],
+      to: [{type: 'project'}],
       validation: (Rule) => Rule.required(),
     },
     {
       name: 'externalUrl',
-      description: 'Adding this field adds an external link from Format, bypassing the single page',
+      description: 'Adding this field adds an external link from Projects, bypassing the single page',
       type: 'url',
     },
     {
@@ -248,6 +248,7 @@ export default {
       name: 'cover',
       type: 'image',
       group: 'media',
+      validation: (Rule) => Rule.required(),
     },
     {
       name: 'background',
@@ -365,7 +366,7 @@ function formatDate(date1, date2) {
   if (date1) {
     d1 = date1 ? new Date(date1) : '';
   } else {
-    return {}
+    return ''
   }
   if (date2) {
     d2 = date2 ? new Date(date2) : new Date(date1);

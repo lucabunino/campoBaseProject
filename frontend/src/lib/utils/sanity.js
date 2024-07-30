@@ -35,7 +35,7 @@ export async function getHomepage() {
 				slug {
 					current
 				},
-				format->{
+				project->{
 					title
 				},
 				cover {
@@ -69,14 +69,14 @@ export async function getAbout() {
 export async function getEvents() {
 	return await client.fetch(
 		`
-		*[_type == "event" && !(_id in path('drafts.**')) && featuredFormat == true] {
+		*[_type == "event" && !(_id in path('drafts.**')) && featuredProject == true] {
 			_type,
 			title,
 			subtitle,
 			slug {
 				current,
 			},
-			format->{
+			project->{
 				orderRank,
 				title
 			},
@@ -102,6 +102,8 @@ export async function getFestivalsMenu() {
 		*[_type == "festival" && !(_id in path('drafts.**')) && featuredMenu == true] {
 			_type,
 			title,
+			subtitle,
+			externalUrl,
 			slug {
 				current,
 			},
@@ -114,13 +116,13 @@ export async function getFestivalsMenu() {
 export async function getFestivals() {
 	return await client.fetch(
 		`
-		*[_type == "festival" && !(_id in path('drafts.**')) && featuredFormat == true] {
+		*[_type == "festival" && !(_id in path('drafts.**')) && featuredProject == true] {
 			title,
 			subtitle,
 			slug {
 				current,
 			},
-			format->{
+			project->{
 				orderRank,
 				title
 			},
@@ -136,7 +138,7 @@ export async function getFestivals() {
 				'aspectRatio': asset->metadata.dimensions.aspectRatio,
 			},
 			externalUrl,
-		} | order(days[0].date desc)
+		} | order(${nonNull('start', 'days[0].date')} desc)
 		`
 	);
 }
@@ -188,9 +190,10 @@ export async function getEvent(slug) {
 			slug {
 				current,
 			},
-			format,
+			project,
 			start,
 			end,
+			time,
 			cover {
 				asset {
 					_ref
@@ -210,9 +213,25 @@ export async function getEvent(slug) {
 			content,
 			location,
 			googleMaps,
+			price,
+			reservationRequired,
+			reservationUrl,
+			reservationContact,
+			sponsoredBy
 		}
 		`,
 		{
 		slug
 	});
+}
+
+function nonNull(a, b) {
+  // Returns first nonNull argument
+  if (a) {
+    return a
+  }
+  if (b[0]) {
+    return b[0].date
+  }
+  return ''
 }

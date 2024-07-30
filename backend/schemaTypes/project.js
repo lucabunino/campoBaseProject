@@ -1,9 +1,12 @@
-import {orderRankField} from '@sanity/orderable-document-list'
+import { orderRankField } from '@sanity/orderable-document-list'
+import { ProjectsIcon } from '@sanity/icons'
+
 
 export default {
-  name: 'format',
-  title: 'Format',
+  name: 'project',
+  title: 'Project',
   type: 'document',
+  icon: ProjectsIcon,
   fields: [
     orderRankField({ type: "festival" }),
     {

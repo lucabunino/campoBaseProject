@@ -2,11 +2,12 @@
 // Import data
 const { data } = $props()
 const item = data.item[0]
+$inspect(item)
 
 import { urlFor } from "$lib/utils/image.js";
 import { PortableText } from '@portabletext/svelte'
 import PortableTextStyle from '$lib/components/portableTextStyle.svelte'
-import { formatDate } from "$lib/utils/date.js";
+import { formatDate, formatTime } from "$lib/utils/date.js";
 import { register } from 'swiper/element/bundle';
 register();
 
@@ -34,8 +35,8 @@ colorer.changeSecondaryColor('#FF6B6B');
     <img class="cover" src={urlFor(item.cover)} alt="Image for {item.title}">
   {/if}
   <div id="info">
-    <p class="date font-m">{formatDate(item.start, item.end)}</p>
-    {#if item.location}<a class="place font-m" href={item.googleMaps} target="_blank">{item.location}</a>{/if}
+    <p class="datetime font-s">{formatDate(item.start, item.end)}<br>{formatTime(item.start, item.end)}</p>
+    {#if item.location}<a class="place font-s" href={item.googleMaps} target="_blank">@{item.location}</a>{/if}
   </div>
   {#if item.content}
     <div id="content">
@@ -98,6 +99,12 @@ swiper-slide img {
   padding: .5em 0;
   border-bottom: solid 1px #000;
 }
+.datetime {
+  text-align: left;
+}
+.place {
+  text-align: right;
+}
 #content {
   padding: .3em 0;
   border-bottom: solid 1px #000;
@@ -111,6 +118,12 @@ swiper-slide img {
 @media screen and (max-width: 600px) {
   #info {
     flex-direction: column;
+  }
+  .datetime {
+    text-align: center;
+  }
+  .place {
+    text-align: center;
   }
 }
 </style>

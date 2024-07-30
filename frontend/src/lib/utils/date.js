@@ -4,7 +4,7 @@ export function formatDate(date1, date2) {
   if (date1) {
     d1 = date1 ? new Date(date1) : '';
   } else {
-    return {}
+    return ''
   }
   if (date2) {
     d2 = date2 ? new Date(date2) : new Date(date1);
@@ -29,5 +29,30 @@ export function formatDate(date1, date2) {
     return `${day1}-${day2}.${month1}.${year1}`;
   } else {
     return `${day1}.${month1}.${year1}-${day2}.${month2}.${year2}`;
+  }
+}
+
+export function formatTime(time1, time2) {
+  // Parse the input times
+  let t1 = time1 ? new Date(time1) : null;
+  let t2 = time2 ? new Date(time2) : null;
+
+  // Helper function to format time as HH:mm
+  const formatHHMM = (date) => {
+    if (!date) return '';
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
+  // Format the times
+  const formattedTime1 = formatHHMM(t1);
+  const formattedTime2 = formatHHMM(t2);
+
+  // Return the formatted string based on the presence of times
+  if (formattedTime1 && formattedTime2) {
+    return `${formattedTime1}-${formattedTime2}`;
+  } else {
+    return `${formattedTime1}`;
   }
 }

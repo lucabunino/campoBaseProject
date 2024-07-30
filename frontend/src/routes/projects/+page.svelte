@@ -14,16 +14,15 @@ colorer.changePrimaryColor('#CC78FF');
 colorer.changeSecondaryColor('#3873D1');
 
 // Variables
-let openFormat = $state(undefined)
-let openFormatHeight = $state()
+let openProject = $state(undefined)
 let scrollY = $state()
 
 // Functions
-function toggleFormat(formatIndex, event) {
-  if (openFormat === formatIndex) {
-    openFormat = undefined
+function toggleProject(projectIndex, event) {
+  if (openProject === projectIndex) {
+    openProject = undefined
   } else {
-    openFormat = formatIndex
+    openProject = projectIndex
     // scrollY = scrollY + event.target.clientHeight;
   }
 }
@@ -31,36 +30,36 @@ function toggleFormat(formatIndex, event) {
 
 <svelte:window bind:scrollY></svelte:window>
 
-<h1>Format</h1>
+<h1>Projects</h1>
 <section>
-  {#each data.format as format, i}
-    {#if format[1].length === 1}
-      <a class="format" href={format[1][0]._type === 'event' ? '/events/' + format[1][0].slug.current : '/festivals/' + format[1][0].slug.current}><h3>{format[1][0].title}</h3></a>
+  {#each data.projects as project, i}
+    {#if project[1].length === 1}
+      <a class="project" href={project[1][0]._type === 'event' ? '/events/' + project[1][0].slug.current : '/festivals/' + project[1][0].slug.current}><h3>{project[1][0].title}</h3></a>
     {:else}
-      <div class="format" data-format={i}>
-        <h3 onkeyup={(e) => toggleFormat(i)} onclick={(e) => toggleFormat(i, e)}>{format[0]}</h3>
-          {#each format[1] as item, j}
+      <div class="project" data-project={i}>
+        <h3 onkeyup={(e) => toggleProject(i)} onclick={(e) => toggleProject(i, e)}>{project[0]}</h3>
+          {#each project[1] as item, j}
               {#if item.externalUrl}
-                {#if openFormat === i}
-                  <a class="format-item font-m" href={item.externalUrl} target="_blank"
+                {#if openProject === i}
+                  <a class="project-item font-m" href={item.externalUrl} target="_blank"
                   transition:slide={{ duration: 500 }}>
                     <img src={urlFor(item.cover).width(800)} alt="">
-                    <div class="format-item-text">
+                    <div class="project-item-text">
                       <p class="font-s">{formatDate(item.start, item.end)}</p>
                       <h2>{item.title}{#if item.subtitle}<br>{item.subtitle}{/if}</h2>
                     </div>
                   </a>
                 {/if}
               {:else}
-                {#if openFormat === i}
-                  <a class="format-item font-m" href={item._type === 'event' ? '/events/' + item.slug.current : '/festivals/' + item.slug.current}
+                {#if openProject === i}
+                  <a class="project-item font-m" href={item._type === 'event' ? '/events/' + item.slug.current : '/festivals/' + item.slug.current}
                   transition:slide={{ duration: 500 }}
                   >
                     <img src={urlFor(item.cover).width(800)} alt="">
-                    <div class="format-item-text">
-                      {#if item._type == 'event'}
+                    <div class="project-item-text">
+                      {#if item._type == 'event' && item.start}
                         <p class="font-s">{formatDate(item.start, item.end)}</p>
-                      {:else}
+                      {:else if item.days}
                         <p class="font-s">{formatDate(item.days[0].date, item.days[item.days.length - 1].date)}</p>
                       {/if}
                       <h2>{item.title}{#if item.subtitle}<br>{item.subtitle}{/if}</h2>
@@ -88,7 +87,7 @@ section {
 }
 
 /* Content */
-h3, .format-item {
+h3, .project-item {
   display: block;
   cursor: pointer;
   padding: .3em 0;
@@ -98,13 +97,13 @@ h3, .format-item {
 h3:hover {
   color: var(--secondaryColor);
 }
-.format {
+.project {
   display: block;
 }
-.format.open {
+.project.open {
   height: auto;
 }
-.format-item {
+.project-item {
   display: grid;
   grid-template-columns: 15vw auto;
   border-bottom: solid 1px #000;
@@ -112,22 +111,25 @@ h3:hover {
   text-align: left;
   padding: .6em 0;
 }
-.format-item+.format-item {
+.project-item+.project-item {
   border-top: solid 1px #000;
 }
-.format-item img {
+.project-item h2 {
+  margin-top: auto;
+}
+.project-item img {
   width: 100%;
   height: auto;
   aspect-ratio: 1;
   object-fit: contain;
 }
-.format-item-text {
+.project-item-text {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 @media screen and (max-width: 1080px) {
-  .format-item {
+  .project-item {
     grid-template-columns: calc(100px + 12vw) auto;
   }
 }

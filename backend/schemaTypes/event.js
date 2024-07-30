@@ -7,12 +7,22 @@ export default {
   icon: SparkleIcon,
   groups: [
     {
+      name: 'basics',
+    },
+    {
       name: 'media',
+    },
+    {
+      name: 'details',
     },
   ],
   fieldsets: [
     {
-      name: 'date',
+      name: 'datetime',
+      options: { columns: 2 },
+    },
+    {
+      name: 'priceAndReservation',
       options: { columns: 2 },
     },
     {
@@ -29,10 +39,12 @@ export default {
       name: 'title',
       type: 'string',
       validation: (Rule) => Rule.required(),
+      group: 'basics',
     },
     {
       name: 'subtitle',
       type: 'string',
+      group: 'basics',
     },
     {
       name: 'slug',
@@ -42,49 +54,107 @@ export default {
         source: 'title',
         maxLength: 96,
       },
+      group: 'basics',
     },
     {
-      name: 'featuredFormat',
-      title: 'Formats',
+      name: 'featuredProject',
+      title: 'Projects',
       type: 'boolean',
       fieldset: 'featured',
+      group: 'basics',
     },
     {
-      name: 'format',
+      name: 'project',
       type: 'reference',
-      to: [{type: 'format'}],
+      to: [{type: 'project'}],
       validation: (Rule) => Rule.required(),
+      group: 'basics',
+    },
+    {
+      name: 'cover',
+      type: 'image',
+      group: 'media',
+      validation: (Rule) => Rule.required(),
+    },
+    {
+      name: 'slider',
+      type: 'array',
+      group: 'media',
+      of: [
+        {
+          name: 'slide',
+          type: 'image',
+        },
+      ],
+      preview: {
+        select: {
+          title: 'title',
+          media: 'slide',
+        },
+      },
     },
     {
       name: 'start',
-      type: 'date',
+      type: 'datetime',
       options: {
         dateFormat: 'DD.MM.YYYY',
+        timeFormat: 'HH.mm',
       },
-      fieldset: 'date',
+      fieldset: 'datetime',
       validation: (Rule) => Rule.required(),
+      group: 'details',
     },
     {
       name: 'end',
-      type: 'date',
+      type: 'datetime',
       options: {
         dateFormat: 'DD.MM.YYYY',
+        timeFormat: 'HH.mm',
       },
-      fieldset: 'date',
+      fieldset: 'datetime',
+      group: 'details',
+    },
+    {
+      name: 'time',
+      title: 'Hide time',
+      type: 'boolean',
+      fieldset: 'datetime',
+      group: 'details',
     },
     {
       name: 'location',
       type: 'string',
       fieldset: 'place',
+      group: 'details',
     },
     {
       name: 'googleMaps',
       type: 'url',
       fieldset: 'place',
+      group: 'details',
+    },
+    {
+      name: 'price',
+      type: 'number',
+      fieldset: 'priceAndReservation',
+      group: 'details',
+    },
+    {
+      name: 'reservationRequired',
+      type: 'boolean',
+      fieldset: 'priceAndReservation',
+      group: 'details',
+    },
+    {
+      name: 'reservationUrl',
+      type: 'url',
+      fieldset: 'priceAndReservation',
+      group: 'details',
     },
     {
       name: 'content',
-      type: 'array', 
+      type: 'array',
+      group: 'details',
       of: [{
         type: 'block',
         lists: [],
@@ -118,27 +188,15 @@ export default {
       }]
     },
     {
-      name: 'cover',
-      type: 'image',
-      group: 'media',
-      validation: (Rule) => Rule.required(),
-    },
-    {
-      name: 'slider',
+      name: 'sponsoredBy',
       type: 'array',
-      group: 'media',
+      group: 'details',
       of: [
         {
-          name: 'slide',
-          type: 'image',
+          name: 'sponsor',
+          type: 'file',
         },
-      ],
-      preview: {
-        select: {
-          title: 'title',
-          media: 'slide',
-        },
-      },
+      ]
     },
   ],
   orderings: [

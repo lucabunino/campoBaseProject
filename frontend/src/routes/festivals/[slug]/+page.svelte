@@ -26,11 +26,29 @@ let sectionHeight = $state()
 let contentHeight = $derived(pageHeight + sectionHeight)
 let openDay = $state(undefined)
 let bgReady = $state(false);
+let stickerNumber = $state(1);
+let string = $derived("../stickers/cbp-adamello-stickers-" + stickerNumber + ".webp");
+let stickers = $state();
 
 onMount(() => {
   setTimeout(() => {
     bgReady = true
   }, 500);
+  if (data.pathname === "/festivals/campo-base-festival-adamello") {
+    setInterval(() => {
+      const img = document.createElement("img");
+      img.src = string;
+      const left = Math.floor(Math.random() * innerWidth);
+      const top = Math.floor(Math.random() * innerHeight);
+      img.style.left = `${left/innerWidth*100}vw`;
+      img.style.top = `${top/innerHeight*100}vh`;
+      stickers.appendChild(img);
+      stickerNumber++
+      if (stickerNumber > 7) {
+        stickerNumber = 1
+      }
+    }, 1500);
+  }
 })
 
 // Functions
@@ -115,6 +133,10 @@ function toggleDay(dayIndex, event) {
   {/each}
 </section>
 
+{#if data.pathname === "/festivals/campo-base-festival-adamello"}
+  <div id="stickers" bind:this={stickers}></div>
+{/if}
+
 <style>
 /* Common */
 #bg-holder {
@@ -187,6 +209,21 @@ swiper-slide img {
 }
 .label {
   text-align: right;
+}
+#stickers {
+  display: contents;
+}
+:global(#stickers>img) {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  width: 4vw;
+  height: auto;
+  z-index: 4;
+}
+@media screen and (max-width: 1080px) {
+  :global(#stickers>img) {
+    width: 6vw;
+  }
 }
 @media screen and (max-width: 800px) {
   .activity {
