@@ -57,6 +57,8 @@ export async function getHomepage() {
 				location,
 				googleMaps,
 				sponsors,
+				use,
+				url
 			}
 		}
 		`
@@ -72,6 +74,9 @@ export async function getAbout() {
 				current,
 			},
 			content,
+			adress,
+			googleMaps,
+			email
 		}
 		`
 	);
@@ -102,7 +107,6 @@ export async function getEvents() {
 				'width': asset->metadata.dimensions.width,
 				'aspectRatio': asset->metadata.dimensions.aspectRatio,
 			},
-			externalUrl,
 		} | order(start desc)
 		`
 	);
@@ -115,12 +119,14 @@ export async function getFestivalsMenu() {
 			_type,
 			title,
 			subtitle,
-			externalUrl,
+			use,
+			url,
+			start,
 			slug {
 				current,
 			},
 			days,
-		} | order(days[0].date asc)
+		} | order(${nonNull('start', 'days[0].date')} desc)
 		`
 	);
 }
@@ -150,7 +156,8 @@ export async function getFestivals() {
 				'width': asset->metadata.dimensions.width,
 				'aspectRatio': asset->metadata.dimensions.aspectRatio,
 			},
-			externalUrl,
+			use,
+			url,
 		} | order(${nonNull('start', 'days[0].date')} desc)
 		`
 	);
@@ -188,7 +195,9 @@ export async function getFestival(slug) {
 			googleMaps,
 			sponsors [] {
 				'url': asset->url
-			}
+			},
+			infoTitle,
+			infoContent
 		}
 		`,
 		{

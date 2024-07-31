@@ -14,22 +14,6 @@ export default {
       type: 'string',
     },
     {
-      name: 'description',
-      type: 'object',
-      fields: [
-        {
-          name: 'it',
-          type: 'text',
-          rows: 5,
-        },
-        {
-          name: 'en',
-          type: 'text',
-          rows: 5,
-        },
-      ]
-    },
-    {
       name: 'slug',
       type: 'slug',
       validation: (Rule) => Rule.required(),
@@ -37,6 +21,24 @@ export default {
         source: 'title',
         maxLength: 96,
       },
+    },
+    {
+      name: 'description',
+      type: 'object',
+      fields: [
+        {
+          name: 'it',
+          type: 'text',
+          rows: 5,
+          validation: (Rule) => Rule.required(),
+        },
+        {
+          name: 'en',
+          type: 'text',
+          rows: 5,
+          validation: (Rule) => Rule.required(),
+        },
+      ]
     },
   ],
 }

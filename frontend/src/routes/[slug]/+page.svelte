@@ -7,6 +7,8 @@ import { PortableText } from '@portabletext/svelte'
 import PortableTextStyle from '$lib/components/portableTextStyle.svelte'
 
 // Import stores
+import { getLang } from '$lib/stores/lang.svelte.js';
+const langer = getLang();
 import { getColor } from '$lib/stores/color.svelte.js';
 const colorer = getColor();
 colorer.changePrimaryColor('#8A7369');
@@ -16,9 +18,9 @@ colorer.changeSecondaryColor('#FF6B6B');
 <h1>{data.about[0].title}</h1>
 <section>
   {#if data.about[0].content}
-    <div id="content">
+    <div id="content" class="font-m">
       <PortableText
-      value={data.about[0].content}
+      value={data.about[0].content[langer.lang]}
       components={{
         block: {
           normal: PortableTextStyle,
@@ -28,6 +30,18 @@ colorer.changeSecondaryColor('#FF6B6B');
         },
       }}
       />
+    </div>
+  {/if}
+  {#if data.about[0].adress || data.about[0].email}
+    <div id="info" class="font-xs">
+      {#if data.about[0].adress && data.about[0].googleMaps}
+        <a class="place" href={data.about[0].googleMaps} target="_blank">{data.about[0].adress}</a>
+      {:else if data.about[0].adress}
+        <p class="place">{data.about[0].adress}</p>
+      {/if}
+      {#if data.about[0].email}
+        <p class="email">Info: <a href="mailto:{data.about[0].email}" target="_blank">{data.about[0].email}</a></p>
+      {/if}
     </div>
   {/if}
 </section>
@@ -42,8 +56,18 @@ h1  {
 section {
   border-top: solid 1px #000;
   border-bottom: solid 1px #000;
-  /* margin-top: 5.86em; */
   width: 100%;
   padding: .3em 0;
+}
+#info {
+  display: flex;
+  justify-content: space-between;
+  padding: 2em 0 0;
+}
+@media screen and (max-width: 1080px) {
+  #info {
+    flex-direction: column;
+    gap: .3em;
+  }
 }
 </style>

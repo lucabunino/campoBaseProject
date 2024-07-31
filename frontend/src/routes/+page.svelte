@@ -7,6 +7,8 @@ import { urlFor } from "$lib/utils/image.js";
 import { formatDate, formatTime } from "$lib/utils/date.js";
 
 // Import stores
+import { getLang } from '$lib/stores/lang.svelte.js';
+const langer = getLang();
 import { getColor } from '$lib/stores/color.svelte.js';
 const colorer = getColor();
 colorer.changePrimaryColor('#3873D1');
@@ -14,8 +16,10 @@ colorer.changeSecondaryColor('#CCBFAA');
 
 // Variables
 let h1Height = $state()
-let lang = $state('it')
+let innerWidth = $state()
 </script>
+
+<svelte:window bind:innerWidth/>
 
 <h1 bind:clientHeight={h1Height}>{data.homepage[0].title}</h1>
 <section>
@@ -23,7 +27,7 @@ let lang = $state('it')
     <div class="item">
       <a href={item._type === 'event' ? '/events/' + item.slug.current : '/festivals/' + item.slug.current}>
         {#if item.cover}
-          <img class="cover" src={urlFor(item.cover).width(1280)} alt="">
+          <img class="cover" src={urlFor(item.cover).width(innerWidth > 1080 ? 1280 : 800)} alt="">
         {:else}
           <p class="cover">Missing image</p>
         {/if}
@@ -37,7 +41,7 @@ let lang = $state('it')
         {/if}
         {#if item.location}<a class="place font-s" href={item.googleMaps} target="_blank">@{item.location}</a>{/if}
         {#if item.project.description}
-          <p class="project-description font-s">{item.project.description[lang]}</p>
+          <p class="project-description font-s">{item.project.description[langer.lang ? langer.lang : 'it']}</p>
         {/if}
         {#if item.price}
           <div class="price">

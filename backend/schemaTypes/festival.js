@@ -24,6 +24,10 @@ export default {
       options: { columns: 2 },
     },
     {
+      name: 'externalLink',
+      options: { columns: 1 },
+    },
+    {
       name: 'priceAndReservation',
       options: { columns: 2 },
     },
@@ -84,9 +88,48 @@ export default {
       group: 'basics',
     },
     {
-      name: 'externalUrl',
-      description: 'Adding this field adds an external link from Projects, bypassing the single page',
+      name: 'use',
+      type: 'boolean',
+      fieldset: 'externalLink',
+      group: 'basics',
+    },
+    {
+      name: 'url',
       type: 'url',
+      fieldset: 'externalLink',
+      group: 'basics',
+      hidden: ({ parent }) => !parent.use,
+      validation: Rule => Rule.custom((externalUrl, context) => {
+        if (context.parent.use && !externalUrl) {
+          return 'External url is required';
+        }
+        return true;
+      }),
+    },
+    {
+      name: 'start',
+      type: 'date',
+      fieldset: 'externalLink',
+      options: {
+        dateFormat: 'DD.MM.YYYY',
+      },
+      hidden: ({ parent }) => !parent.use,
+      validation: Rule => Rule.custom((start, context) => {
+        if (context.parent.use && !start) {
+          return 'Start date is required';
+        }
+        return true;
+      }),
+      group: 'basics',
+    },
+    {
+      name: 'end',
+      type: 'date',
+      fieldset: 'externalLink',
+      options: {
+        dateFormat: 'DD.MM.YYYY',
+      },
+      hidden: ({ parent }) => !parent.use,
       group: 'basics',
     },
     {
@@ -136,35 +179,94 @@ export default {
       },
     },
     {
-      name: 'start',
-      type: 'date',
-      fieldset: 'date',
-      options: {
-        dateFormat: 'DD.MM.YYYY',
-      },
-      hidden: ({ parent }) => !parent.externalUrl,
-      validation: Rule => Rule.custom((start, context) => {
-        if (context.parent.externalUrl && !start) {
-          return 'Start date is required when externalUrl is provided';
+      name: 'content',
+      type: 'object',
+      fields: [
+        {
+          name: 'it',
+          type: 'array',
+          validation: (Rule) => Rule.required(),
+          of: [{
+            type: 'block',
+            lists: [],
+            styles: [{title: 'Testo corrente', value: 'normal'},],
+            marks: {
+              annotations: [
+                {
+                  name: 'link',
+                  type: 'object',
+                  title: 'External link',
+                  fields: [
+                    {
+                      name: 'href',
+                      type: 'url',
+                      title: 'URL'
+                    },
+                    {
+                      title: 'Open in new tab',
+                      name: 'blank',
+                      description: 'Read https://css-tricks.com/use-target_blank/',
+                      type: 'boolean'
+                    }
+                  ]
+                },
+              ],
+              decorators: [
+                {title: 'Strong', value: 'strong'},
+                {title: 'Emphasis', value: 'em'},
+              ]
+            },
+          }],
+        },
+        {
+          name: 'en',
+          type: 'array',
+          validation: (Rule) => Rule.required(),
+          of: [{
+            type: 'block',
+            lists: [],
+            styles: [{title: 'Testo corrente', value: 'normal'},],
+            marks: {
+              annotations: [
+                {
+                  name: 'link',
+                  type: 'object',
+                  title: 'External link',
+                  fields: [
+                    {
+                      name: 'href',
+                      type: 'url',
+                      title: 'URL'
+                    },
+                    {
+                      title: 'Open in new tab',
+                      name: 'blank',
+                      description: 'Read https://css-tricks.com/use-target_blank/',
+                      type: 'boolean'
+                    }
+                  ]
+                },
+              ],
+              decorators: [
+                {title: 'Strong', value: 'strong'},
+                {title: 'Emphasis', value: 'em'},
+              ]
+            },
+          }],
         }
-        return true;
-      }),
-      group: 'details',
-    },
-    {
-      name: 'end',
-      type: 'date',
-      fieldset: 'date',
-      options: {
-        dateFormat: 'DD.MM.YYYY',
-      },
-      hidden: ({ parent }) => !parent.externalUrl,
+      ],
       group: 'details',
     },
     {
       name: 'days',
       type: 'array',
-      hidden: ({ parent }) => !!parent.externalUrl,
+      hidden: ({ parent }) => !!parent.use,
+      validation: Rule => Rule.custom((days, context) => {
+        if (!context.parent.use && !days) {
+          return 'At least one day is required';
+        }
+        return true;
+      }),
       of: [
         {
           type: 'object',
@@ -196,6 +298,15 @@ export default {
                       name: 'link',
                       options: { columns: 2 },
                     },
+                    {
+                      name: 'priceAndReservation',
+                      options: { columns: 2 },
+                    },
+                    {
+                      name: 'place',
+                      title: 'Place (punto d’incontro)',
+                      options: { columns: 2 },
+                    },
                   ],
                   fields: [
                     {
@@ -217,19 +328,50 @@ export default {
                       }),
                     },
                     {
-                      name: 'title',
-                      type: 'string',
+                      name: 'description',
+                      type: 'text',
+                      rows: 4,
                       validation: (Rule) => Rule.required(),
                     },
                     {
-                      name: 'label',
-                      type: 'string',
-                      fieldset: 'link',
+                      name: 'price',
+                      type: 'number',
+                      fieldset: 'priceAndReservation',
+                      validation: Rule => Rule.precision(2).positive(),
                     },
                     {
-                      name: 'url',
+                      name: 'buyUrl',
                       type: 'url',
-                      fieldset: 'link',
+                      fieldset: 'priceAndReservation',
+                      validation: Rule => Rule.uri({
+                        scheme: ['http', 'https', 'mailto', 'tel']
+                      }),
+                    },
+                    {
+                      name: 'reservationUrl',
+                      type: 'url',
+                      fieldset: 'priceAndReservation',
+                      validation: Rule => Rule.uri({
+                        scheme: ['http', 'https', 'mailto', 'tel']
+                      }),
+                    },
+                    {
+                      name: 'infoUrl',
+                      type: 'url',
+                      fieldset: 'priceAndReservation',
+                      validation: Rule => Rule.uri({
+                        scheme: ['http', 'https', 'mailto', 'tel']
+                      }),
+                    },
+                    {
+                      name: 'location',
+                      type: 'string',
+                      fieldset: 'place',
+                    },
+                    {
+                      name: 'googleMaps',
+                      type: 'url',
+                      fieldset: 'place',
                     },
                   ],
                   preview: {
@@ -263,6 +405,103 @@ export default {
           media: 'slide',
         },
       },
+      group: 'details',
+    },
+    {
+      name: 'infoTitle',
+      type: 'object',
+      fields: [
+        {
+          name: 'it',
+          type: 'string',
+          validation: (Rule) => Rule.required(),
+        },
+        {
+          name: 'en',
+          type: 'string',
+          validation: (Rule) => Rule.required(),
+          
+        }
+      ],
+      group: 'details',
+    },
+    {
+      name: 'infoContent',
+      type: 'object',
+      fields: [
+        {
+          name: 'it',
+          type: 'array',
+          validation: (Rule) => Rule.required(),
+          of: [{
+            type: 'block',
+            lists: [],
+            styles: [{title: 'Testo corrente', value: 'normal'},],
+            marks: {
+              annotations: [
+                {
+                  name: 'link',
+                  type: 'object',
+                  title: 'External link',
+                  fields: [
+                    {
+                      name: 'href',
+                      type: 'url',
+                      title: 'URL'
+                    },
+                    {
+                      title: 'Open in new tab',
+                      name: 'blank',
+                      description: 'Read https://css-tricks.com/use-target_blank/',
+                      type: 'boolean'
+                    }
+                  ]
+                },
+              ],
+              decorators: [
+                {title: 'Strong', value: 'strong'},
+                {title: 'Emphasis', value: 'em'},
+              ]
+            },
+          }],
+        },
+        {
+          name: 'en',
+          type: 'array',
+          validation: (Rule) => Rule.required(),
+          of: [{
+            type: 'block',
+            lists: [],
+            styles: [{title: 'Testo corrente', value: 'normal'},],
+            marks: {
+              annotations: [
+                {
+                  name: 'link',
+                  type: 'object',
+                  title: 'External link',
+                  fields: [
+                    {
+                      name: 'href',
+                      type: 'url',
+                      title: 'URL'
+                    },
+                    {
+                      title: 'Open in new tab',
+                      name: 'blank',
+                      description: 'Read https://css-tricks.com/use-target_blank/',
+                      type: 'boolean'
+                    }
+                  ]
+                },
+              ],
+              decorators: [
+                {title: 'Strong', value: 'strong'},
+                {title: 'Emphasis', value: 'em'},
+              ]
+            },
+          }],
+        }
+      ],
       group: 'details',
     },
     {
@@ -300,42 +539,6 @@ export default {
       validation: Rule => Rule.uri({
         scheme: ['http', 'https', 'mailto', 'tel']
       }),
-      group: 'details',
-    },
-    {
-      name: 'content',
-      type: 'array', 
-      of: [{
-        type: 'block',
-        lists: [],
-        styles: [{title: 'Testo corrente', value: 'normal'},],
-        marks: {
-          annotations: [
-            {
-              name: 'link',
-              type: 'object',
-              title: 'External link',
-              fields: [
-                {
-                  name: 'href',
-                  type: 'url',
-                  title: 'URL'
-                },
-                {
-                  title: 'Open in new tab',
-                  name: 'blank',
-                  description: 'Read https://css-tricks.com/use-target_blank/',
-                  type: 'boolean'
-                }
-              ]
-            },
-          ],
-          decorators: [
-            {title: 'Strong', value: 'strong'},
-            {title: 'Emphasis', value: 'em'},
-          ]
-        },
-      }],
       group: 'details',
     },
     {
@@ -383,12 +586,12 @@ export default {
       days: 'days',
       start: 'start',
       end: 'end',
-      url: 'externalUrl'
+      use: 'use'
     },
     prepare(selection) {
-      const {title, cover, days, start, end, url} = selection;
+      const {title, cover, days, start, end, use} = selection;
 
-      if (url) {
+      if (use) {
         return {
           title: title,
           subtitle: formatDate(start, end),

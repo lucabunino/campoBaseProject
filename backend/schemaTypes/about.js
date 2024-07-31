@@ -1,6 +1,12 @@
 export default {
   name: 'about',
   type: 'document',
+  fieldsets: [
+    {
+      name: 'place',
+      options: { columns: 2 },
+    },
+  ],
   fields: [
     {
       name: 'title',
@@ -18,41 +24,100 @@ export default {
     },
     {
       name: 'content',
-      type: 'array',
-      validation: (Rule) => Rule.required(),
-      of: [
+      type: 'object',
+      fields: [
         {
-          type: 'block',
-          lists: [],
-          styles: [{title: 'Testo corrente', value: 'normal'},],
-          marks: {
-            annotations: [
-              {
-                name: 'link',
-                type: 'object',
-                title: 'External link',
-                fields: [
+          name: 'it',
+          type: 'array',
+          validation: (Rule) => Rule.required(),
+          of: [
+            {
+              type: 'block',
+              lists: [],
+              styles: [{title: 'Testo corrente', value: 'normal'},],
+              marks: {
+                annotations: [
                   {
-                    name: 'href',
-                    type: 'url',
-                    title: 'URL'
+                    name: 'link',
+                    type: 'object',
+                    title: 'External link',
+                    fields: [
+                      {
+                        name: 'href',
+                        type: 'url',
+                        title: 'URL'
+                      },
+                      {
+                        title: 'Open in new tab',
+                        name: 'blank',
+                        description: 'Read https://css-tricks.com/use-target_blank/',
+                        type: 'boolean'
+                      }
+                    ]
                   },
-                  {
-                    title: 'Open in new tab',
-                    name: 'blank',
-                    description: 'Read https://css-tricks.com/use-target_blank/',
-                    type: 'boolean'
-                  }
+                ],
+                decorators: [
+                  {title: 'Strong', value: 'strong'},
+                  {title: 'Emphasis', value: 'em'},
                 ]
               },
-            ],
-            decorators: [
-              {title: 'Strong', value: 'strong'},
-              {title: 'Emphasis', value: 'em'},
-            ]
-          },
-        }
+            }
+          ]
+        },
+        {
+          name: 'en',
+          type: 'array',
+          validation: (Rule) => Rule.required(),
+          of: [
+            {
+              type: 'block',
+              lists: [],
+              styles: [{title: 'Testo corrente', value: 'normal'},],
+              marks: {
+                annotations: [
+                  {
+                    name: 'link',
+                    type: 'object',
+                    title: 'External link',
+                    fields: [
+                      {
+                        name: 'href',
+                        type: 'url',
+                        title: 'URL'
+                      },
+                      {
+                        title: 'Open in new tab',
+                        name: 'blank',
+                        description: 'Read https://css-tricks.com/use-target_blank/',
+                        type: 'boolean'
+                      }
+                    ]
+                  },
+                ],
+                decorators: [
+                  {title: 'Strong', value: 'strong'},
+                  {title: 'Emphasis', value: 'em'},
+                ]
+              },
+            }
+          ]
+        },
+        
       ]
+    },
+    {
+      name: 'adress',
+      type: 'string',
+      fieldset: 'place',
+    },
+    {
+      name: 'googleMaps',
+      type: 'url',
+      fieldset: 'place',
+    },
+    {
+      name: 'email',
+      type: 'string',
     },
   ],
 }

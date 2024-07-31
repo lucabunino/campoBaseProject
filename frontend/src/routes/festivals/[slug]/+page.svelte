@@ -6,13 +6,14 @@ const item = data.item[0]
 import { urlFor } from "$lib/utils/image.js";
 import { PortableText } from '@portabletext/svelte'
 import PortableTextStyle from '$lib/components/portableTextStyle.svelte'
-import { formatDate } from "$lib/utils/date.js";
+import { formatDate, formatTimeStrings } from "$lib/utils/date.js";
 import { register } from 'swiper/element/bundle';
 import { slide, fade } from "svelte/transition";
-import { onMount } from "svelte";
 register();
 
 // Import stores
+import { getLang } from '$lib/stores/lang.svelte.js';
+const langer = getLang();
 import { getColor } from '$lib/stores/color.svelte.js';
 const colorer = getColor();
 item.background ? colorer.changePrimaryColor(item.background.hex) : colorer.changePrimaryColor('#8A7369');
@@ -28,6 +29,7 @@ let openDay = $state(undefined)
 let stickerNumber = $state(1);
 let string = $derived("../stickers/cbp-adamello-stickers-" + stickerNumber + ".webp");
 let stickers = $state();
+let innerWidth = $state();
 
 $effect(() => {
   const timer = setInterval(() => {
@@ -44,7 +46,7 @@ $effect(() => {
         stickerNumber = 1
       }
     }
-  }, 1500);
+  }, 2000);
   return () => clearInterval(timer);
 });
 
@@ -58,11 +60,11 @@ function toggleDay(dayIndex, event) {
 }
 </script>
 
-<svelte:window bind:scrollY></svelte:window>
+<svelte:window bind:innerWidth bind:scrollY></svelte:window>
 
 {#if item.backgroundImage}
   <div id="bg-holder" transition:fade={{ duration: 500 }}>
-    <div id="bg-image" style="height: calc({contentHeight}px + 10em); background-image: url({urlFor(item.backgroundImage).width(1920)}); margin-top: -{scrollImg}px"></div>
+    <div id="bg-image" style="height: calc({contentHeight}px + 10em); background-image: url({urlFor(item.backgroundImage).width(innerWidth > 1080 ? 1920 : 1080)}); margin-top: -{scrollImg}px"></div>
   </div>
 {/if}
 
@@ -70,12 +72,11 @@ function toggleDay(dayIndex, event) {
   <br>{item.subtitle}{/if}
   {#if item.days}<br>{formatDate(item.days[0].date, item.days[item.days.length - 1].date)}{/if}
 </h1>
-<!-- <section bind:clientHeight={sectionHeight} class={item._type} style={item.subtitle ? 'margin-top: 9.26em;' : 'margin-top: 7.06em;'}> -->
 <section bind:clientHeight={sectionHeight} class={item._type}>
   {#if item.content}
     <div id="content" class="font-m">
       <PortableText
-      value={item.content}
+      value={item.content[langer.lang]}
       components={{
         block: {
           normal: PortableTextStyle,
@@ -91,43 +92,73 @@ function toggleDay(dayIndex, event) {
     <swiper-container>
       {#each item.slider as slide}
         <swiper-slide>
-          <img src={urlFor(slide)} alt="Image for {item.title}">
+          <img src={urlFor(slide).width(innerWidth > 1080 ? 1280 : 800)} alt="Image for {item.title}">
         </swiper-slide>
       {/each}
     </swiper-container>
   {:else}
-    <img class="cover" src={urlFor(item.cover)} alt="Image for {item.title}">
+    <img class="cover" src={urlFor(item.cover).width(innerWidth > 1080 ? 1280 : 800)} alt="Image for {item.title}">
   {/if}
   {#each item.days as day, i}
-    <h3 class="day font-l" onkeyup={(e) => toggleDay(i)} onclick={(e) => toggleDay(i, e)}>{Intl.DateTimeFormat('it-IT', { weekday: 'long' }).format(new Date(day.date))}</h3>
+    <h3 class="day font-l" onkeyup={(e) => toggleDay(i)} onclick={(e) => toggleDay(i, e)}>{Intl.DateTimeFormat(langer.lang, { weekday: 'long' }).format(new Date(day.date))}</h3>
     {#each day.activities as activity, j}
-      {#if activity.url && activity.label && activity.start && activity.title}
+      {#if activity && activity.description}
         {#if openDay === i}
-          <a class="activity font-m" href={activity.url} target="_blank"
+          <div class="activity font-m" 
           transition:slide={{ duration: 500 }}>
-            <p class="time font-xs">{activity.start}{#if activity.end}-{activity.end}{/if}</p>
-            <p class="title font-s">{activity.title}</p>
-            <p class="label font-xs">{activity.label}</p>
-          </a>
-        {/if}
-      {:else if activity.start && activity.title}
-        {#if openDay === i}
-          <div class="activity"
-          transition:slide={{ duration: 500 }}>
-            <p class="time font-xs">{activity.start}{#if activity.end}-{activity.end}{/if}</p>
-            <p class="title font-s">{activity.title}</p>
-          </div>
-        {/if}
-      {:else}
-        {#if openDay === i}
-          <div class="activity"
-          transition:slide={{ duration: 500 }}>
-            <p class="time font-xs" style="white-space: pre;">Some content is missing</p>
+            <p class="time font-xs">{formatTimeStrings(activity.start, activity.end)}</p>
+            <p class="title font-s">{activity.description}</p>
+            {#if activity.price}
+              <div class="price font-xs">
+                <p class="price-value">Evento a pagamento {activity.price.toLocaleString(langer.lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
+                {#if activity.buyUrl}
+                  <a class="price-url" href={activity.buyUrl} target="_blank">Acquista qui</a>
+                {:else if activity.reservationUrl}
+                  <a class="price-url" href={activity.reservationUrl} target="_blank">Iscriviti qui</a>
+                {/if}
+              </div>
+            {:else}
+              <div class="price font-xs">
+                <p class="price-value">Evento gratuito{#if activity.reservationUrl}{@html ' previa iscrizione'}{/if}</p>
+                {#if activity.reservationUrl}<a class="price-url font-xs" href={activity.reservationUrl}>Iscriviti qui</a>{/if}
+              </div>
+            {/if}
+            <div class="info font-xs">
+              {#if activity.infoUrl}
+                <a class="info-url" href={activity.infoUrl}>{activity.infoUrl.replace('mailto:', 'Mail: ').replace('tel:', 'Num tel: ').replace('https://', 'Info: ').replace('http://', 'Info: ')}</a>
+              {/if}
+              {#if activity.location}
+                {#if activity.googleMaps}
+                  <a class="info-location" href={activity.googleMaps}>{activity.location}</a>
+                {:else}
+                  <p class="info-location">{activity.location}</p>
+                {/if}
+              {/if}
+            </div>
           </div>
         {/if}
       {/if}
     {/each}
   {/each}
+  {#if item.infoTitle && item.infoContent}
+    <h3 id="infoTitle" class="day font-l" onkeyup={(e) => toggleDay('info')} onclick={(e) => toggleDay('info', e)}>{item.infoTitle[langer.lang]}</h3>
+    {#if openDay === 'info'}
+      <div id="infoContent" class="font-m"
+      transition:slide={{ duration: 500 }}>
+        <PortableText
+        value={item.infoContent[langer.lang]}
+        components={{
+          block: {
+            normal: PortableTextStyle,
+          },
+          marks: {
+            link: PortableTextStyle,
+          },
+        }}
+        />
+      </div>
+    {/if}
+  {/if}
   {#if item.sponsors}
       <div id="sponsors">
         <h4 class="font-s">Sponsored by</h4>
@@ -141,7 +172,7 @@ function toggleDay(dayIndex, event) {
         </div>
         {:else}
         <div class="marquee">
-          <div class="marquee-content">
+          <div class="marquee-content grid">
             {#each item.sponsors as sponsor, i}
               <img class="logo" src={sponsor.url} alt="Sponsor of {item.title}">
             {/each}
@@ -179,7 +210,7 @@ h1  {
 }
 section {
   border-top: solid 1px #000;
-  /* margin-top: 5.86em; */
+  border-bottom: solid 1px #000;
   width: 100%;
 }
 
@@ -205,8 +236,10 @@ swiper-slide img {
   display: block;
 }
 #content {
-  padding: .3em 0;
+  padding: .5em 0 1em;
 }
+
+/* Days */
 .day {
   padding: .3em 0;
   border-bottom: solid 1px #000;
@@ -218,18 +251,49 @@ swiper-slide img {
   color: var(--secondaryColor);
 }
 .activity {
-  display: grid;
-  grid-template-columns: 20% 50% auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
   text-align: left;
-  gap: .5em;
+  row-gap: .5em;
   padding: .3em 0;
   border-bottom: solid 1px #000;
+  align-items: baseline;
 }
-.label {
-  text-align: right;
+.time {
+  flex-basis: 20%;
 }
+.title {
+  flex-basis: 80%;
+}
+.price,
+.info {
+  flex-basis: 50%;
+  display: flex;
+  align-items: baseline;
+  gap: 1em;
+}
+.price {
+  justify-content: start;
+}
+.info {
+  justify-content: end;
+}
+.price-value {
+  text-align: left;
+}
+.price-url {
+  /* text-align: right; */
+}
+
+#infoContent {
+  text-align: left;
+  padding: .5em 0 .7em;
+  border-bottom: solid 1px #000;
+}
+
+/* Sponsors */
 #sponsors {
-  border-top: solid 1px #000;
   text-align: left;
 }
 #sponsors h4 {
@@ -243,8 +307,14 @@ swiper-slide img {
 #sponsors .marquee-content {
   display: flex;
 }
+:global(#sponsors .grid) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5em;
+}
 #sponsors .logo {
-  height: .7em;
+  height: 1em;
+  max-width: 2em;
   margin-right: 1em;
 }
 #stickers {
@@ -264,13 +334,29 @@ swiper-slide img {
 }
 @media screen and (max-width: 800px) {
   .activity {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+    row-gap: .2em;
     padding: .6em 0;
   }
-  .label {
-    text-align: left;
+  .price,
+  .info {
+    flex-basis: 100%;
+  }
+  .info {
+    justify-content: start;
+  }
+  .price {
+    margin-top: .7em;
+  }
+}
+@media screen and (max-width: 360px) {
+  .activity {
+    display: block;
+  }
+  .time {
+    margin-bottom: .5em;
+  }
+  .info {
+    margin-top: .5em;
   }
 }
 </style>

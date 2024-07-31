@@ -8,10 +8,13 @@ import { page, navigating } from '$app/stores';
 import { urlFor } from '$lib/utils/image';
 import { onMount } from 'svelte'
 import { workaround, pageIn, pageOut, loaderOut, newsletterInOut } from '$lib/utils/transition';
+import { browser } from '$app/environment';
 
 // Import stores
 import { getColor } from '$lib/stores/color.svelte.js';
 const colorer = getColor();
+import { getLang } from '$lib/stores/lang.svelte.js';
+const langer = getLang();
 
 // Variables
 let innerWidth = $state();
@@ -20,17 +23,39 @@ let pageHeight = $state();
 let ready = $state(false);
 let scrollY = $state(0)
 let menuOpen = $state()
-let newsletterOpen = $state(true)
+let newsletterOpen = $state()
 let scrollNewsletter = $derived(scrollY/2)
 let newsletterHeight = $state()
 
 onMount(() => {
-  if ($page.url.pathname) {
-    setTimeout(() => {
-      ready = true;
-    }, 400);
+  // if ($page.url.pathname) {
+  //   setTimeout(() => {
+  //     ready = true;
+  //   }, 400);
+  // }
+  if (browser) {
+    checkLanguage();
+    newsletterOpen = true;
   }
+  ready = true;
 });
+
+function checkLanguage() {
+  // Check if userLanguage is stored in localStorage
+  const storedLanguage = localStorage.getItem('userLanguage');
+  if (storedLanguage && (storedLanguage === 'it' || storedLanguage === 'en')) {
+    langer.changeLang(storedLanguage)
+  } else {
+    // If not stored or invalid, get the user's preferred language from userAgent
+    const userAgentLanguage = navigator.language.substr(0, 2) || navigator.userLanguage.substr(0, 2); // Get the first two characters for language code
+    if (userAgentLanguage === 'it' || userAgentLanguage === 'en') {
+      langer.changeLang(userAgentLanguage);
+    } else {
+      langer.changeLang('it');
+    }
+  }
+}
+
 </script>
   
 <svelte:head>
@@ -49,15 +74,15 @@ onMount(() => {
 
 <svelte:window bind:innerWidth bind:innerHeight bind:scrollY/>
 
-{#key data.pathname}
+<!-- {#key data.pathname}
   <div id="loader"
   class:active={$navigating}
   style="background-color: {colorer.secondaryColor};"
   out:loaderOut={workaround({ delay: 1000, duration: 1000 })}
   ></div>
-{/key}
+{/key} -->
 
-{#if ready}
+<!-- {#if ready} -->
   <div style="display:contents; --primaryColor: {colorer.primaryColor};--secondaryColor: {colorer.secondaryColor};">
     <div id="bg"></div>
     <header>
@@ -76,7 +101,7 @@ onMount(() => {
           </li>
           {#each data.festivalsMenu as festival, i}
             <li class="menu-item">
-              <a href={festival.externalUrl ? festival.externalUrl : `/festivals/${festival.slug.current}`} onclick={(e) => menuOpen = false} class:active={$page.url.pathname === `/festivals/${festival.slug.current}`}>{festival.title}{festival.subtitle ? ' ' + festival.subtitle : ''}</a>
+              <a href={festival.use ? festival.url : `/festivals/${festival.slug.current}`} onclick={(e) => menuOpen = false} class:active={$page.url.pathname === `/festivals/${festival.slug.current}`}>{festival.title}{festival.subtitle ? ' ' + festival.subtitle : ''}</a>
             </li>
           {/each}
           <li class="menu-item">
@@ -88,6 +113,11 @@ onMount(() => {
         </ul>
         <button id="menuSwitch" onclick={(e) => menuOpen = !menuOpen}>{!menuOpen ? 'Menu' : 'X'}</button>
       </nav>
+      <div id="langSwitch">
+        <button class="lang-item font-xs" onclick={(e) => langer.changeLang('it')} class:active={langer.lang === 'it'}>It</button>
+        <span class="font-xs">/</span>
+        <button class="lang-item font-xs" onclick={(e) => langer.changeLang('en')} class:active={langer.lang === 'en'}>En</button>
+      </div>
     </header>
 
     {#if newsletterOpen && $page.url.pathname === "/"}
@@ -116,14 +146,14 @@ onMount(() => {
     {/if}
 
     {#key data.pathname}
-      <main
+      <!-- <main
       in:pageIn={workaround({ delay: 300, duration: 0, customValue: scrollY })}
       out:pageOut={workaround({ delay: 0, duration: 300, customValue: scrollY })}
       bind:clientHeight={pageHeight}
-      >
-      <!-- <main
-      bind:clientHeight={pageHeight}
       > -->
+      <main
+      bind:clientHeight={pageHeight}
+      >
         {@render children()}
       </main>
     {/key}
@@ -132,7 +162,7 @@ onMount(() => {
       <p class="footer-item">©{new Date().getFullYear()} {data.seo[0].SEOTitle}, All rights reserved</p>
     </footer>
   </div>
-{/if}
+<!-- {/if} -->
 
 <style>
 @keyframes leftLoad {
@@ -188,8 +218,8 @@ onMount(() => {
   height: 100vh;
   z-index: -1;
   background-color: var(--primaryColor);
-  transition: background-color ease-in-out 100ms;
-  transition-delay: 300ms;
+  /* transition: background-color ease-in-out 100ms; */
+  /* transition-delay: 300ms; */
 }
 @media screen and (max-width: 1080px) {
   #loader {
@@ -248,8 +278,28 @@ onMount(() => {
     height: auto;
     width: 70vw;
     border-bottom: solid 1px #000;
-    padding: 4em var(--gutter);
+    padding: 3em var(--gutter) 6em;
   }
+}
+#langSwitch {
+  position: fixed;
+  right: var(--gutter);
+  top: 1em;
+  z-index: 5;
+  display: flex;
+}
+.lang-item {
+  padding: inherit;
+  font-family: inherit;
+  background-color: inherit;
+  border: inherit;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.lang-item.active {
+  text-decoration: underline;
+  text-underline-offset: .15em;
+  text-decoration-thickness: 1px;
 }
 
 /* Newsletter */

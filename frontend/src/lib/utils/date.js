@@ -38,7 +38,7 @@ export function formatTime(time1, time2) {
   // Parse the input times
   let t1 = time1 ? new Date(time1) : null;
   let t2 = time2 ? new Date(time2) : null;
-
+  
   // Helper function to format time as HH:mm
   const formatHHMM = (date) => {
     if (!date) return '';
@@ -56,5 +56,15 @@ export function formatTime(time1, time2) {
     return `${formattedTime1}-${formattedTime2}`;
   } else {
     return `${formattedTime1}`;
+  }
+}
+
+export function formatTimeStrings(time1, time2) {  
+  if (time1 && time2) {
+    return `${time1}-${time2}`;
+  } else if (time1) {
+    return `${time1}`;
+  } {
+    return ``;
   }
 }

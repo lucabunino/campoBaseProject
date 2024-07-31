@@ -12,10 +12,15 @@ import { onMount } from 'svelte';
 register();
 
 // Import stores
+import { getLang } from '$lib/stores/lang.svelte.js';
+const langer = getLang();
 import { getColor } from '$lib/stores/color.svelte.js';
 const colorer = getColor();
 colorer.changePrimaryColor('#8A7369');
 colorer.changeSecondaryColor('#FF6B6B');
+
+// Variables
+let innerWidth = $state()
 
 $effect(() => {
   if (item.sponsors && item.sponsors.length > 3) {
@@ -42,6 +47,8 @@ function Marquee(selector, speed) {
 }
 </script>
 
+<svelte:window bind:innerWidth></svelte:window>
+
 <h1>{item.title}
   {#if item.subtitle}<br>{item.subtitle}{/if}
 </h1>
@@ -51,12 +58,12 @@ function Marquee(selector, speed) {
     <swiper-container loop=true space-between=16 autoplay={{delay: 2500,disableOnInteraction: true,waitForTransition: true}}>
       {#each item.slider as slide}
         <swiper-slide>
-          <img src={urlFor(slide)} alt="Image for {item.title}">
+          <img src={urlFor(slide).width(innerWidth > 1080 ? 1280 : 800)} alt="Image for {item.title}">
         </swiper-slide>
       {/each}
     </swiper-container>
     {:else}
-      <img class="cover" src={urlFor(item.cover)} alt="Image for {item.title}">
+      <img class="cover" src={urlFor(item.cover).width(innerWidth > 1080 ? 1280 : 800)} alt="Image for {item.title}">
     {/if}
   <div>
     <div id="info">
@@ -81,7 +88,7 @@ function Marquee(selector, speed) {
     {#if item.content}
       <div id="content">
         <PortableText
-        value={item.content}
+        value={item.content[langer.lang]}
         components={{
           block: {
             normal: PortableTextStyle,
@@ -106,7 +113,7 @@ function Marquee(selector, speed) {
         </div>
         {:else}
         <div class="marquee">
-          <div class="marquee-content">
+          <div class="marquee-content grid">
             {#each item.sponsors as sponsor, i}
               <img class="logo" src={sponsor.url} alt="Sponsor of {item.title}">
             {/each}
@@ -197,6 +204,11 @@ swiper-slide img {
 #sponsors .marquee-content {
   display: flex;
 }
+:global(#sponsors .marquee-content .grid) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
 #sponsors .logo {
   height: .7em;
   margin-right: 1em;
@@ -207,7 +219,7 @@ swiper-slide img {
     gap: .2em;
   }
 }
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 350px) {
   #info {
     flex-direction: column;
   }

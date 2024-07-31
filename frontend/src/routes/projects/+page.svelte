@@ -9,6 +9,8 @@ import { slide } from "svelte/transition";
 import { formatDate } from "$lib/utils/date.js";
 
 // Import stores
+import { getLang } from '$lib/stores/lang.svelte.js';
+const langer = getLang();
 import { getColor } from '$lib/stores/color.svelte.js';
 const colorer = getColor();
 colorer.changePrimaryColor('#CC78FF');
@@ -17,7 +19,6 @@ colorer.changeSecondaryColor('#3873D1');
 // Variables
 let openProject = $state(undefined)
 let scrollY = $state()
-let lang = $state('it')
 
 // Functions
 function toggleProject(projectIndex, event) {
@@ -36,20 +37,22 @@ function toggleProject(projectIndex, event) {
 <section>
   {#each data.projects as project, i}
     {#if project[2].length === 1}
-      <a class="project single" href={project[2][0]._type === 'event' ? '/events/' + project[2][0].slug.current : '/festivals/' + project[2][0].slug.current}><h3>{project[2][0].title}</h3></a>
+      <a class="project single" href={project[2][0]._type === 'event' ? '/events/' + project[2][0].slug.current : '/festivals/' + project[2][0].slug.current}>
+        <h3 class="project-title">{project[2][0].title}</h3>
+      </a>
     {:else}
       <div class="project" data-project={i}>
-        <h3 onkeyup={(e) => toggleProject(i)} onclick={(e) => toggleProject(i, e)}>{project[0]}</h3>
+        <button class="project-title font-l" onkeyup={(e) => toggleProject(i)} onclick={(e) => toggleProject(i, e)}>{project[0]}</button>
           {#if project[1] && openProject === i}
-            <p transition:slide={{ duration: 500 }} class="project-description font-s">{project[1][lang]}</p>
+            <p transition:slide={{ duration: 500 }} class="project-description font-s">{project[1][langer.lang]}</p>
           {/if}
           <div class="project-expandable">
             {#each project[2] as item, j}
-                {#if item.externalUrl}
+                {#if item.use}
                   {#if openProject === i}
-                    <a class="project-item font-m" href={item.externalUrl} target="_blank"
+                    <a class="project-item font-m" href={item.url} target="_blank"
                     transition:slide={{ duration: 500 }}>
-                      <img src={urlFor(item.cover).width(800)} alt="">
+                      <img src={urlFor(item.cover).width(innerWidth > 1080 ? 1280 : 800)} alt="">
                       <div class="project-item-text">
                         <p class="font-s">{formatDate(item.start, item.end)}</p>
                         <h2>{item.title}{#if item.subtitle}<br>{item.subtitle}{/if}</h2>
@@ -61,7 +64,7 @@ function toggleProject(projectIndex, event) {
                     <a class="project-item font-m" href={item._type === 'event' ? '/events/' + item.slug.current : '/festivals/' + item.slug.current}
                     transition:slide={{ duration: 500 }}
                     >
-                      <img src={urlFor(item.cover).width(800)} alt="">
+                      <img src={urlFor(item.cover).width(innerWidth > 1080 ? 1280 : 800)} alt="">
                       <div class="project-item-text">
                         {#if item._type == 'event' && item.start}
                           <p class="font-s">{formatDate(item.start, item.end)}</p>
@@ -94,11 +97,14 @@ section {
 }
 
 /* Content */
-h3, .project-item {
+.project-title, .project-item {
   display: block;
   cursor: pointer;
   padding: .3em 0;
   width: 100%;
+  font-family: inherit;
+  background-color: inherit;
+  border: none;
 }
 h3:hover {
   color: var(--secondaryColor);
@@ -108,9 +114,6 @@ h3:hover {
 }
 .project.single {
   border-bottom: solid 1px #000;
-}
-.project.open {
-  height: auto;
 }
 .project-expandable {
   border-top: solid 1px #000;
@@ -126,9 +129,6 @@ h3:hover {
   gap: .4em;
   text-align: left;
   padding: .6em 0;
-}
-.project-item+.project-item {
-  border-top: solid 1px #000;
 }
 .project-item h2 {
   margin-top: auto;
