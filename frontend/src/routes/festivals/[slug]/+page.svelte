@@ -120,6 +120,7 @@ function Marquee(selector, speed) {
     <img class="cover" src={urlFor(item.cover).width(innerWidth > 1080 ? 1280 : 800)} alt="Image for {item.title}">
   {/if}
   {#each item.days as day, i}
+  {#if day.activities}
     <h3 class="day font-l" onkeyup={(e) => toggleDay(i)} onclick={(e) => toggleDay(i, e)}>{Intl.DateTimeFormat(langer.lang, { weekday: 'long' }).format(new Date(day.date))}</h3>
     {#each day.activities as activity, j}
       {#if activity && activity.description}
@@ -159,6 +160,7 @@ function Marquee(selector, speed) {
         {/if}
       {/if}
     {/each}
+  {/if}
   {/each}
   {#if item.infoTitle && item.infoContent}
     <h3 id="infoTitle" class="day font-l" onkeyup={(e) => toggleDay('info')} onclick={(e) => toggleDay('info', e)}>{item.infoTitle[langer.lang]}</h3>
@@ -279,6 +281,7 @@ swiper-slide img {
   padding: .3em 0;
   border-bottom: solid 1px #000;
   align-items: baseline;
+  overflow: hidden;
 }
 .time {
   flex-basis: 20%;
@@ -310,6 +313,7 @@ swiper-slide img {
   text-align: left;
   padding: .5em 0 .7em;
   border-bottom: solid 1px #000;
+  overflow: hidden;
 }
 
 /* Sponsors */

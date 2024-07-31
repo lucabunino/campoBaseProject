@@ -105,6 +105,7 @@ section {
   font-family: inherit;
   background-color: inherit;
   border: none;
+  overflow: hidden;
 }
 h3:hover {
   color: var(--secondaryColor);
