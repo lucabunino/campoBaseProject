@@ -45,7 +45,7 @@ let innerWidth = $state()
         {/if}
         {#if item.price}
           <div class="price">
-            <p class="price-value font-s">Evento a pagamento {item.price.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
+            <p class="price-value font-s">Ticket {item.price.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
             {#if item.buyUrl}
               <a class="price-url font-xs" href={item.buyUrl} target="_blank">Acquista qui</a>
             {:else if item.reservationUrl}

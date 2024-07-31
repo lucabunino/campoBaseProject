@@ -110,7 +110,7 @@ function toggleDay(dayIndex, event) {
             <p class="title font-s">{activity.description}</p>
             {#if activity.price}
               <div class="price font-xs">
-                <p class="price-value">Evento a pagamento {activity.price.toLocaleString(langer.lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
+                <p class="price-value">Ticket {activity.price.toLocaleString(langer.lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
                 {#if activity.buyUrl}
                   <a class="price-url" href={activity.buyUrl} target="_blank">Acquista qui</a>
                 {:else if activity.reservationUrl}
@@ -310,7 +310,7 @@ swiper-slide img {
 :global(#sponsors .grid) {
   display: flex;
   flex-wrap: wrap;
-  gap: .5em;
+  row-gap: .5em;
 }
 #sponsors .logo {
   height: 1em;
