@@ -205,7 +205,7 @@ function Marquee(selector, speed) {
     {/if}
 </section>
 
-{#if data.pathname === "/festivals/campo-base-festival-adamello"}
+{#if data.pathname === "/festivals/campo-base-festival-adamello-2024"}
   <div id="stickers" bind:this={stickers}></div>
 {/if}
 
