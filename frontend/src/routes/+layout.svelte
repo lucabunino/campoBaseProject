@@ -344,6 +344,7 @@ h4 {
   font-family: inherit;
   font-size: inherit;
   color: inherit;
+  overflow: hidden;
 }
 .form-item input::placeholder {
   color: inherit;
@@ -357,6 +358,7 @@ h4 {
   border: none;
   cursor: pointer;
   margin-top: 1em;
+  margin-left: auto;
 }
 #newsletterSwitch:hover,
 .submit:hover {
