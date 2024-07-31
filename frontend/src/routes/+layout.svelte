@@ -255,6 +255,11 @@ function checkLanguage() {
   text-align: left;
   overflow-y: scroll;
   z-index: 5;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+#menu::-webkit-scrollbar {
+  display: none;
 }
 #menu.open {
   transform: translateX(0);

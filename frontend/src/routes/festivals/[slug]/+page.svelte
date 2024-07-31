@@ -36,7 +36,7 @@ $effect(() => {
     Marquee('.marquee', 0.4) 
   }
   const timer = setInterval(() => {
-    if (data.pathname === "/festivals/campo-base-festival-adamello") {
+    if (data.pathname === "/festivals/campo-base-festival-adamello-2024") {
       const img = document.createElement("img");
       img.src = string;
       const left = Math.floor(Math.random() * innerWidth);
