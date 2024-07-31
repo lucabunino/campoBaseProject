@@ -147,7 +147,7 @@ p.cover {
 }
 @media screen and (max-width: 1080px) {
   .cover {
-    width: 70%;
+    width: 100%;
   }
 }
 </style>
