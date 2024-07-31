@@ -285,7 +285,7 @@ function checkLanguage() {
   position: fixed;
   right: var(--gutter);
   top: 1em;
-  z-index: 5;
+  z-index: 4;
   display: flex;
 }
 .lang-item {
