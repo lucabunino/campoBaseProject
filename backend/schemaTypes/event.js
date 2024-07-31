@@ -164,7 +164,8 @@ export default {
       fields: [
         {
           name: 'it',
-          type: 'array', 
+          type: 'array',
+          validation: (Rule) => Rule.required(),
           of: [{
             type: 'block',
             lists: [],
@@ -196,11 +197,11 @@ export default {
               ]
             },
           }],
-          validation: (Rule) => Rule.required(),
         },
         {
           name: 'en',
-          type: 'array', 
+          type: 'array',
+          validation: (Rule) => Rule.required(),
           of: [{
             type: 'block',
             lists: [],
@@ -232,7 +233,6 @@ export default {
               ]
             },
           }],
-          validation: (Rule) => Rule.required(),
         }
       ],
       group: 'details',
