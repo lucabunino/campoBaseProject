@@ -35,7 +35,9 @@ onMount(() => {
   // }
   if (browser) {
     checkLanguage();
-    newsletterOpen = true;
+    setTimeout(() => {
+      newsletterOpen = true;
+    }, 100);
   }
   ready = true;
 });
@@ -82,7 +84,6 @@ function checkLanguage() {
   ></div>
 {/key} -->
 
-<!-- {#if ready} -->
   <div style="display:contents; --primaryColor: {colorer.primaryColor};--secondaryColor: {colorer.secondaryColor};">
     <div id="bg"></div>
     <header>
@@ -119,32 +120,7 @@ function checkLanguage() {
         <button class="lang-item font-xs" onclick={(e) => langer.changeLang('en')} class:active={langer.lang === 'en'}>En</button>
       </div>
     </header>
-
-    {#if newsletterOpen && $page.url.pathname === "/"}
-      <div id="newsletter" bind:clientHeight={newsletterHeight} class="font-m"
-      transition:newsletterInOut={workaround({ delay: 0, duration: 500, customValue: scrollNewsletter > newsletterHeight - innerHeight*.2 ? newsletterHeight - innerHeight*.2 : scrollNewsletter })}
-      style="{scrollNewsletter > newsletterHeight - innerHeight*.2 ? `margin-top: -${newsletterHeight - innerHeight*.2}px` : `margin-top: -${scrollNewsletter}px;`}"
-      >
-        <button class="font-s" id="newsletterSwitch" onclick={(e) => newsletterOpen = !newsletterOpen}>X</button>
-        <h4>Newsletter</h4>
-        <form action="">
-          <div class="form-item">
-            <p class="font-xs">email</p>
-            <input type="email" name="email" placeholder="email@example.com">
-          </div>
-          <div class="form-item">
-            <p class="font-xs">nome</p>
-            <input type="text" name="name" placeholder="Nomen">
-          </div>
-          <div class="form-item">
-            <p class="font-xs">cognome</p>
-            <input type="text" name="surname" placeholder="Nescio">
-          </div>
-          <button class="font-xs submit">submit</button>
-        </form>
-      </div>
-    {/if}
-
+{#if ready}
     {#key data.pathname}
       <!-- <main
       in:pageIn={workaround({ delay: 300, duration: 0, customValue: scrollY })}
@@ -157,12 +133,55 @@ function checkLanguage() {
         {@render children()}
       </main>
     {/key}
+  {/if}
+  {#if ready}
 
     <footer class="font-xs">
       <p class="footer-item">©{new Date().getFullYear()} {data.seo[0].SEOTitle}, All rights reserved</p>
     </footer>
+    {/if}
   </div>
-<!-- {/if} -->
+
+
+  {#if newsletterOpen && $page.url.pathname === "/"}
+      <div id="newsletter" bind:clientHeight={newsletterHeight} class="font-m"
+      transition:newsletterInOut={workaround({ delay: 0, duration: 600, customValue: scrollNewsletter > newsletterHeight - innerHeight*.2 ? newsletterHeight - innerHeight*.2 : scrollNewsletter })}
+      style="{scrollNewsletter > newsletterHeight - innerHeight*.2 ? `margin-top: -${newsletterHeight - innerHeight*.2}px` : `margin-top: -${scrollNewsletter}px;`}"
+      >
+        <button class="font-s" id="newsletterSwitch" onclick={(e) => newsletterOpen = !newsletterOpen}>X</button>
+        <div id="mc_embed_shell">
+          <div id="mc_embed_signup">
+              <form action="https://campobaseproject.us22.list-manage.com/subscribe/post?u=aec20ff3ba0eeaac6f77c7e2d&amp;id=3fb762fadd&amp;f_id=00b7d1e1f0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_self" novalidate="">
+                  <div id="mc_embed_signup_scroll"><h4>Newsletter</h4>
+                      <div class="mc-field-group">
+                        <label for="mce-EMAIL" class="font-xs">Email<span class="asterisk">*</span></label>
+                        <input type="email" name="EMAIL" class="required email" id="mce-EMAIL" required="" value="" placeholder="email@example.com">
+                      </div>
+                      <div class="mc-field-group">
+                        <label for="mce-FNAME" class="font-xs">Nome</label><input type="text" name="FNAME" class=" text" id="mce-FNAME" value="" placeholder="Nomen">
+                      </div>
+                      <div class="mc-field-group last">
+                        <label for="mce-LNAME" class="font-xs">Cognome</label><input type="text" name="LNAME" class=" text" id="mce-LNAME" value="" placeholder="Nescio">
+                      </div>
+                  <div id="mce-responses" class="clear foot">
+                      <div class="response" id="mce-error-response" style="display: none;"></div>
+                      <div class="response" id="mce-success-response" style="display: none;"></div>
+                  </div>
+              <div aria-hidden="true" style="position: absolute; left: -5000px;">
+                  /* real people should not fill this in and expect good things - do not remove this or risk form bot signups */
+                  <input type="text" name="b_aec20ff3ba0eeaac6f77c7e2d_3fb762fadd" tabindex="-1" value="">
+              </div>
+                  <div class="optionalParent">
+                      <div class="clear foot">
+                          <input type="submit" name="subscribe" id="mc-embedded-subscribe" class="button font-xs submit" value="Submit">
+                      </div>
+                  </div>
+              </div>
+          </form>
+          </div>
+        </div>
+      </div>
+    {/if}
 
 <style>
 @keyframes leftLoad {
@@ -245,7 +264,7 @@ function checkLanguage() {
   top: 0;
   left: 0;
   transform: translateX(-100%);
-  transition: all ease-in-out 500ms;
+  transition: all ease-in-out 600ms;
   height: -webkit-fill-available;
   background-color: var(--primaryColor);
   width: 35vw;
@@ -332,17 +351,17 @@ function checkLanguage() {
 h4 {
   margin-bottom: 1em;
 }
-.form-item {
+.mc-field-group {
   display: flex;
   padding: .3em 0;
   gap: .5em;
   align-items: center;
   border-top: solid 1px #000;
 }
-.form-item:last-of-type {
+.mc-field-group.last {
   border-bottom: solid 1px #000;
 }
-.form-item input {
+.mc-field-group input {
   background-color: unset;
   border: none;
   outline: none;
@@ -351,7 +370,7 @@ h4 {
   color: inherit;
   overflow: hidden;
 }
-.form-item input::placeholder {
+input::placeholder {
   color: inherit;
   opacity: .4;
 }
@@ -405,8 +424,8 @@ header {
 
 /* Main */
 main {
-  width: 67.708vw;
-  margin-left: 16.146vw;
+  width: 67.708%;
+  margin-left: 16.146%;
   display: flex;
   flex-direction: column;
   align-items: center;
