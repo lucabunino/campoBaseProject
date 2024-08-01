@@ -124,7 +124,9 @@ h3:hover {
   padding: 1em 0 .5em
 }
 .project-item {
+  display: -ms-grid;
   display: grid;
+  -ms-grid-columns: 15vw .4em auto;
   grid-template-columns: 15vw auto;
   border-bottom: solid 1px #000;
   gap: .4em;
@@ -138,15 +140,24 @@ h3:hover {
   width: 100%;
   height: auto;
   aspect-ratio: 1;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 .project-item-text {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 @media screen and (max-width: 1080px) {
   .project-item {
+    -ms-grid-columns: calc(100px + 12vw) auto;
     grid-template-columns: calc(100px + 12vw) auto;
   }
 }

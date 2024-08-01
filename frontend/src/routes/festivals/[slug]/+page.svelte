@@ -239,12 +239,15 @@ section {
 /* Festival */
 .cover {
   aspect-ratio: 1;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 .cover,
 swiper-container {
   width: calc(100vw - 16.146vw*2);
+  width: -moz-available;
   width: -webkit-fill-available;
+  width: fill-available;
   height: auto;
   padding: .5em 0;
   border-bottom: solid 1px #000;
@@ -273,34 +276,52 @@ swiper-slide img {
   color: var(--secondaryColor);
 }
 .activity {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   text-align: left;
   row-gap: .5em;
   padding: .3em 0;
   border-bottom: solid 1px #000;
-  align-items: baseline;
+  -webkit-box-align: baseline;
+      -ms-flex-align: baseline;
+          align-items: baseline;
   overflow: hidden;
 }
 .time {
-  flex-basis: 20%;
+  -ms-flex-preferred-size: 20%;
+      flex-basis: 20%;
 }
 .title {
-  flex-basis: 80%;
+  -ms-flex-preferred-size: 80%;
+      flex-basis: 80%;
 }
 .price,
 .info {
-  flex-basis: 50%;
+  -ms-flex-preferred-size: 50%;
+      flex-basis: 50%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: baseline;
+  -webkit-box-align: baseline;
+      -ms-flex-align: baseline;
+          align-items: baseline;
   gap: 1em;
 }
 .price {
-  justify-content: start;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: start;
 }
 .info {
-  justify-content: end;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: end;
 }
 .price-value {
   text-align: left;
@@ -325,15 +346,22 @@ swiper-slide img {
 }
 #sponsors .marquee {
   overflow: hidden;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   padding: 0 0 .5em;
 }
 #sponsors .marquee-content {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
 }
 :global(#sponsors .grid) {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   row-gap: .5em;
 }
 #sponsors .logo {
@@ -346,7 +374,9 @@ swiper-slide img {
 }
 :global(#stickers>img) {
   position: fixed;
-  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
   width: 4vw;
   height: auto;
   z-index: 4;
@@ -363,10 +393,13 @@ swiper-slide img {
   }
   .price,
   .info {
-    flex-basis: 100%;
+    -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
   }
   .info {
-    justify-content: start;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: start;
   }
   .price {
     margin-top: .7em;

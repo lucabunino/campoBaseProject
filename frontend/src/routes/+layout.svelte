@@ -184,12 +184,28 @@ function checkLanguage() {
     {/if}
 
 <style>
+@-webkit-keyframes leftLoad {
+  0% {
+    left: -100vw;
+  }
+  100% {
+    left: 0;
+  }
+}
 @keyframes leftLoad {
   0% {
     left: -100vw;
   }
   100% {
     left: 0;
+  }
+}
+@-webkit-keyframes leftUnload {
+  0% {
+    left: 0;
+  }
+  100% {
+    left: 100vw;
   }
 }
 @keyframes leftUnload {
@@ -200,12 +216,28 @@ function checkLanguage() {
     left: 100vw;
   }
 }
+@-webkit-keyframes topLoad {
+  0% {
+    top: 100vh;
+  }
+  100% {
+    top: 0;
+  }
+}
 @keyframes topLoad {
   0% {
     top: 100vh;
   }
   100% {
     top: 0;
+  }
+}
+@-webkit-keyframes topUnload {
+  0% {
+    top: 0;
+  }
+  100% {
+    top: -100vh;
   }
 }
 @keyframes topUnload {
@@ -225,9 +257,14 @@ function checkLanguage() {
   z-index: 10;
   border-left: solid 1px #000;
   border-right: solid 1px #000;
-  animation: leftLoad 300ms forwards, leftUnload 300ms forwards 600ms;
+  -webkit-animation: leftLoad 300ms forwards, leftUnload 300ms forwards 600ms;
+          animation: leftLoad 300ms forwards, leftUnload 300ms forwards 600ms;
+  -webkit-transition: background-color ease-in-out 500ms;
+  -o-transition: background-color ease-in-out 500ms;
   transition: background-color ease-in-out 500ms;
-  transition-delay: 1000ms;
+  -webkit-transition-delay: 1000ms;
+       -o-transition-delay: 1000ms;
+          transition-delay: 1000ms;
 }
 #bg {
   position: fixed;
@@ -242,7 +279,8 @@ function checkLanguage() {
 }
 @media screen and (max-width: 1080px) {
   #loader {
-    animation: topLoad 300ms forwards, topUnload 300ms forwards 600ms;
+    -webkit-animation: topLoad 300ms forwards, topUnload 300ms forwards 600ms;
+            animation: topLoad 300ms forwards, topUnload 300ms forwards 600ms;
   }
 }
 
@@ -263,9 +301,14 @@ function checkLanguage() {
   position: fixed;
   top: 0;
   left: 0;
-  transform: translateX(-100%);
+  -webkit-transform: translateX(-100%);
+      -ms-transform: translateX(-100%);
+          transform: translateX(-100%);
+  -webkit-transition: all ease-in-out 600ms;
+  -o-transition: all ease-in-out 600ms;
   transition: all ease-in-out 600ms;
-  height: -webkit-fill-available;
+  height: 100vh;
+  height: fill-available;
   background-color: var(--primaryColor);
   width: 35vw;
   border-right: solid 1px #000;
@@ -281,7 +324,9 @@ function checkLanguage() {
   display: none;
 }
 #menu.open {
-  transform: translateX(0);
+  -webkit-transform: translateX(0);
+      -ms-transform: translateX(0);
+          transform: translateX(0);
 }
 .menu-item {
   list-style: none;
@@ -310,6 +355,8 @@ function checkLanguage() {
   right: var(--gutter);
   top: 1em;
   z-index: 4;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
 }
 .lang-item {
@@ -352,10 +399,14 @@ h4 {
   margin-bottom: 1em;
 }
 .mc-field-group {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   padding: .3em 0;
   gap: .5em;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   border-top: solid 1px #000;
 }
 .mc-field-group.last {
@@ -369,6 +420,22 @@ h4 {
   font-size: inherit;
   color: inherit;
   overflow: hidden;
+}
+input::-webkit-input-placeholder {
+  color: inherit;
+  opacity: .4;
+}
+input::-moz-placeholder {
+  color: inherit;
+  opacity: .4;
+}
+input:-ms-input-placeholder {
+  color: inherit;
+  opacity: .4;
+}
+input::-ms-input-placeholder {
+  color: inherit;
+  opacity: .4;
 }
 input::placeholder {
   color: inherit;
@@ -395,14 +462,20 @@ input::placeholder {
     top: unset;
     bottom: var(--gutter);
     margin: 0 var(--gutter);
+    width: -moz-available;
     width: -webkit-fill-available;
+    width: fill-available;
   }
 }
 
 /* Header */
 header {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   z-index: 5;
   position: fixed;
   top: 0;
@@ -426,9 +499,16 @@ header {
 main {
   width: 67.708%;
   margin-left: 16.146%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   min-height: calc(100vh - 7.7*.7rem);
 }
 @media screen and (max-width: 1080px) {

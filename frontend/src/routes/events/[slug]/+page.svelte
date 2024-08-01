@@ -52,7 +52,6 @@ function Marquee(selector, speed) {
 <h1>{item.title}
   {#if item.subtitle}<br>{item.subtitle}{/if}
 </h1>
-<!-- <section class={item._type} style="{item.subtitle ? 'margin-top: 7.06em;' : ''}"> -->
 <section class={item._type}>
   {#if item.slider}
     <swiper-container loop=true space-between=16 autoplay={{delay: 2500,disableOnInteraction: true,waitForTransition: true}}>
@@ -140,12 +139,15 @@ section {
 /* Event */
 .cover {
   aspect-ratio: 1;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 .cover,
 swiper-container {
   width: calc(100vw - 16.146vw*2);
+  width: -moz-available;
   width: -webkit-fill-available;
+  width: fill-available;
   height: auto;
   padding: 0 0 .5em;
   border-bottom: solid 1px #000;
@@ -159,9 +161,14 @@ swiper-slide img {
   display: block;
 }
 #info {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   padding: .5em 0;
 }
 .datetime {
@@ -171,10 +178,17 @@ swiper-slide img {
   text-align: right;
 }
 .price {
-  flex-basis: 100%;
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: baseline;
+      -ms-flex-align: baseline;
+          align-items: baseline;
 }
 .price-value {
   text-align: left;
@@ -183,7 +197,8 @@ swiper-slide img {
   text-align: right;
 }
 #content {
-  flex-basis: 100%;
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
   padding: .3em 0;
 }
 #info + #content {
@@ -198,15 +213,22 @@ swiper-slide img {
 }
 #sponsors .marquee {
   overflow: hidden;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   padding: 0 0 .5em;
 }
 #sponsors .marquee-content {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
 }
 :global(#sponsors .marquee-content .grid) {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   row-gap: 1em;
 }
 #sponsors .logo {
@@ -215,13 +237,17 @@ swiper-slide img {
 }
 @media screen and (max-width: 1080px) {
   #info {
-    flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
     gap: .2em;
   }
 }
 @media screen and (max-width: 350px) {
   #info {
-    flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
   }
   .datetime,
   .place,

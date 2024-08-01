@@ -60,13 +60,20 @@ section {
   padding: .3em 0;
 }
 #info {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   padding: 2em 0 0;
 }
 @media screen and (max-width: 1080px) {
   #info {
-    flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
     gap: .3em;
   }
 }
