@@ -328,10 +328,44 @@ export default {
                       }),
                     },
                     {
-                      name: 'description',
-                      type: 'text',
-                      rows: 4,
+                      name: 'title',
+                      type: 'string',
                       validation: (Rule) => Rule.required(),
+                    },
+                    {
+                      name: 'description',
+                      type: 'array',
+                      of: [{
+                        type: 'block',
+                        lists: [],
+                        styles: [{title: 'Testo corrente', value: 'normal'},],
+                        marks: {
+                          annotations: [
+                            {
+                              name: 'link',
+                              type: 'object',
+                              title: 'External link',
+                              fields: [
+                                {
+                                  name: 'href',
+                                  type: 'url',
+                                  title: 'URL'
+                                },
+                                {
+                                  title: 'Open in new tab',
+                                  name: 'blank',
+                                  description: 'Read https://css-tricks.com/use-target_blank/',
+                                  type: 'boolean'
+                                }
+                              ]
+                            },
+                          ],
+                          decorators: [
+                            {title: 'Strong', value: 'strong'},
+                            {title: 'Emphasis', value: 'em'},
+                          ]
+                        },
+                      }],
                     },
                     {
                       name: 'price',

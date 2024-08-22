@@ -36,11 +36,11 @@ function toggleProject(projectIndex, event) {
 <h1>Projects</h1>
 <section>
   {#each data.projects as project, i}
-    {#if project[2].length === 1}
+    <!-- {#if project[2].length === 1}
       <a class="project single" href={project[2][0]._type === 'event' ? '/events/' + project[2][0].slug.current : '/festivals/' + project[2][0].slug.current}>
         <h3 class="project-title">{project[2][0].title}</h3>
       </a>
-    {:else}
+    {:else} -->
       <div class="project" data-project={i}>
         <button class="project-title font-l" onkeyup={(e) => toggleProject(i)} onclick={(e) => toggleProject(i, e)}>{project[0]}</button>
           {#if project[1] && openProject === i}
@@ -79,7 +79,7 @@ function toggleProject(projectIndex, event) {
             {/each}
           </div>
       </div>
-    {/if}
+    <!-- {/if} -->
   {/each}
 </section>
 

@@ -49,7 +49,7 @@ $effect(() => {
         stickerNumber = 1
       }
     }
-  }, 2000);
+  }, 4000);
   return () => clearInterval(timer);
 });
 
@@ -128,10 +128,23 @@ function Marquee(selector, speed) {
           <div class="activity font-m" 
           transition:slide={{ duration: 500 }}>
             <p class="time font-xs">{formatTimeStrings(activity.start, activity.end)}</p>
-            <p class="title font-s">{activity.description}</p>
+            <div class="content font-s">
+              <p class="title">{activity.title}</p>
+              <PortableText
+              value={activity.description}
+              components={{
+                block: {
+                  normal: PortableTextStyle,
+                },
+                marks: {
+                  link: PortableTextStyle,
+                },
+              }}
+              />
+            </div>
             {#if activity.price}
               <div class="price font-xs">
-                <p class="price-value">Ticket {activity.price.toLocaleString(langer.lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
+                <p class="price-value">Prezzo {activity.price.toLocaleString(langer.lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
                 {#if activity.buyUrl}
                   <a class="price-url" href={activity.buyUrl} target="_blank">Acquista qui</a>
                 {:else if activity.reservationUrl}
@@ -146,7 +159,7 @@ function Marquee(selector, speed) {
             {/if}
             <div class="info font-xs">
               {#if activity.infoUrl}
-                <a class="info-url" href={activity.infoUrl}>{activity.infoUrl.replace('mailto:', 'Mail: ').replace('tel:', 'Num tel: ').replace('https://', 'Info: ').replace('http://', 'Info: ')}</a>
+                <a class="info-url" href={activity.infoUrl}>{activity.infoUrl.replace('mailto:', 'Mail: ').replace('tel:', 'Per prenotazioni: ').replace('https://', 'Info: ').replace('http://', 'Info: ')}</a>
               {/if}
               {#if activity.location}
                 {#if activity.googleMaps}
@@ -165,7 +178,7 @@ function Marquee(selector, speed) {
   {#if item.infoTitle && item.infoContent}
     <h3 id="infoTitle" class="day font-l" onkeyup={(e) => toggleDay('info')} onclick={(e) => toggleDay('info', e)}>{item.infoTitle[langer.lang]}</h3>
     {#if openDay === 'info'}
-      <div id="infoContent" class="font-m"
+      <div id="infoContent" class="font-s"
       transition:slide={{ duration: 500 }}>
         <PortableText
         value={item.infoContent[langer.lang]}
@@ -297,9 +310,12 @@ swiper-slide img {
   -ms-flex-preferred-size: 20%;
       flex-basis: 20%;
 }
-.title {
+.content {
   -ms-flex-preferred-size: 80%;
       flex-basis: 80%;
+}
+.title {
+  font-weight: 700;
 }
 .price,
 .info {
@@ -335,6 +351,7 @@ swiper-slide img {
   padding: .5em 0 .7em;
   border-bottom: solid 1px #000;
   overflow: hidden;
+  display: block;
 }
 
 /* Sponsors */
