@@ -32,7 +32,7 @@ let stickers = $state();
 let innerWidth = $state();
 
 $effect(() => {
-  if (item.sponsors && item.sponsors.length > 3) {
+  if (item.partners && item.partners.length > 3) {
     Marquee('.marquee', 0.4) 
   }
   const timer = setInterval(() => {
@@ -119,6 +119,29 @@ function Marquee(selector, speed) {
   {:else}
     <img class="cover" src={urlFor(item.cover).width(innerWidth > 1080 ? 1280 : 800)} alt="Image for {item.title}">
   {/if}
+  {#if item.exhibitionTitle && item.exhibitionContent}
+  {$inspect(item)}
+    <h3 id="exhibitionTitle" class="day font-l" onkeyup={(e) => toggleDay('exhibition')} onclick={(e) => toggleDay('exhibition', e)}>{item.exhibitionTitle[langer.lang]}</h3>
+    {#if openDay === 'exhibition'}
+      <div id="exhibitionContent" class="font-s"
+      transition:slide={{ duration: 500 }}>
+      {#if item.exhibitionStart}
+        <p>{formatDate(item.exhibitionStart, item.exhibitionEnd)}</p>
+      {/if}
+        <PortableText
+        value={item.exhibitionContent[langer.lang]}
+        components={{
+          block: {
+            normal: PortableTextStyle,
+          },
+          marks: {
+            link: PortableTextStyle,
+          },
+        }}
+        />
+      </div>
+    {/if}
+  {/if}
   {#each item.days as day, i}
   {#if day.activities}
     <h3 class="day font-l" onkeyup={(e) => toggleDay(i)} onclick={(e) => toggleDay(i, e)}>{Intl.DateTimeFormat(langer.lang, { weekday: 'long' }).format(new Date(day.date))}</h3>
@@ -153,7 +176,11 @@ function Marquee(selector, speed) {
               </div>
             {:else}
               <div class="price font-xs">
-                <p class="price-value">Evento gratuito{#if activity.reservationUrl}{@html ' previa iscrizione'}{/if}</p>
+                {#if activity.freeOffer}
+                  <p class="price-value">Offerta libera{#if activity.reservationUrl}{@html ' previa iscrizione'}{/if}</p>
+                {:else}
+                  <p class="price-value">Evento gratuito{#if activity.reservationUrl}{@html ' previa iscrizione'}{/if}</p>
+                {/if}
                 {#if activity.reservationUrl}<a class="price-url font-xs" href={activity.reservationUrl}>Iscriviti qui</a>{/if}
               </div>
             {/if}
@@ -194,22 +221,22 @@ function Marquee(selector, speed) {
       </div>
     {/if}
   {/if}
-  {#if item.sponsors}
-      <div id="sponsors">
-        <h4 class="font-s">Sponsored by</h4>
-        {#if item.sponsors.length > 3}
+  {#if item.partners}
+      <div id="partners">
+        <h4 class="font-s">Partners</h4>
+        {#if item.partners.length > 3}
         <div class="marquee">
           <div class="marquee-content">
-            {#each item.sponsors as sponsor, i}
-              <img class="logo" src={sponsor.url} alt="Sponsor of {item.title}">
+            {#each item.partners as partner, i}
+              <img class="logo" src={partner.url} alt="partner of {item.title}">
             {/each}
           </div>
         </div>
         {:else}
         <div class="marquee">
           <div class="marquee-content grid">
-            {#each item.sponsors as sponsor, i}
-              <img class="logo" src={sponsor.url} alt="Sponsor of {item.title}">
+            {#each item.partners as partner, i}
+              <img class="logo" src={partner.url} alt="partner of {item.title}">
             {/each}
           </div>
         </div>
@@ -245,7 +272,6 @@ h1  {
 }
 section {
   border-top: solid 1px #000;
-  border-bottom: solid 1px #000;
   width: 100%;
 }
 
@@ -345,7 +371,7 @@ swiper-slide img {
 .price-url {
   /* text-align: right; */
 }
-
+#exhibitionContent,
 #infoContent {
   text-align: left;
   padding: .5em 0 .7em;
@@ -354,26 +380,26 @@ swiper-slide img {
   display: block;
 }
 
-/* Sponsors */
-#sponsors {
+/* partners */
+#partners {
   text-align: left;
 }
-#sponsors h4 {
+#partners h4 {
   padding: .5em 0 2em;
 }
-#sponsors .marquee {
+#partners .marquee {
   overflow: hidden;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   padding: 0 0 .5em;
 }
-#sponsors .marquee-content {
+#partners .marquee-content {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
-:global(#sponsors .grid) {
+:global(#partners .grid) {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -381,7 +407,7 @@ swiper-slide img {
       flex-wrap: wrap;
   row-gap: .5em;
 }
-#sponsors .logo {
+#partners .logo {
   height: 1em;
   max-width: 2em;
   margin-right: 1em;

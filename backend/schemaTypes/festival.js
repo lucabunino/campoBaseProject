@@ -43,6 +43,10 @@ export default {
       name: 'featured',
       options: { columns: 2 },
     },
+    {
+      name: 'exhibitionDate',
+      options: { columns: 2 },
+    },
   ],
   fields: [
     {
@@ -258,6 +262,121 @@ export default {
       group: 'details',
     },
     {
+      name: 'exhibitionTitle',
+      type: 'object',
+      fields: [
+        {
+          name: 'it',
+          type: 'string',
+          validation: (Rule) => Rule.required(),
+        },
+        {
+          name: 'en',
+          type: 'string',
+          validation: (Rule) => Rule.required(),
+          
+        }
+      ],
+      group: 'details',
+    },
+    {
+      name: 'exhibitionStart',
+      type: 'date',
+      options: {
+        dateFormat: 'DD.MM.YYYY',
+      },
+      group: 'details',
+      fieldset: 'exhibitionDate'
+    },
+    {
+      name: 'exhibitionEnd',
+      type: 'date',
+      options: {
+        dateFormat: 'DD.MM.YYYY',
+      },
+      group: 'details',
+      fieldset: 'exhibitionDate'
+    },
+    {
+      name: 'exhibitionContent',
+      type: 'object',
+      fields: [
+        {
+          name: 'it',
+          type: 'array',
+          validation: (Rule) => Rule.required(),
+          of: [{
+            type: 'block',
+            lists: [],
+            styles: [{title: 'Testo corrente', value: 'normal'},],
+            marks: {
+              annotations: [
+                {
+                  name: 'link',
+                  type: 'object',
+                  title: 'External link',
+                  fields: [
+                    {
+                      name: 'href',
+                      type: 'url',
+                      title: 'URL'
+                    },
+                    {
+                      title: 'Open in new tab',
+                      name: 'blank',
+                      description: 'Read https://css-tricks.com/use-target_blank/',
+                      type: 'boolean'
+                    }
+                  ]
+                },
+              ],
+              decorators: [
+                {title: 'Strong', value: 'strong'},
+                {title: 'Emphasis', value: 'em'},
+              ]
+            },
+          }],
+        },
+        {
+          name: 'en',
+          type: 'array',
+          validation: (Rule) => Rule.required(),
+          of: [{
+            type: 'block',
+            lists: [],
+            styles: [{title: 'Testo corrente', value: 'normal'},],
+            marks: {
+              annotations: [
+                {
+                  name: 'link',
+                  type: 'object',
+                  title: 'External link',
+                  fields: [
+                    {
+                      name: 'href',
+                      type: 'url',
+                      title: 'URL'
+                    },
+                    {
+                      title: 'Open in new tab',
+                      name: 'blank',
+                      description: 'Read https://css-tricks.com/use-target_blank/',
+                      type: 'boolean'
+                    }
+                  ]
+                },
+              ],
+              decorators: [
+                {title: 'Strong', value: 'strong'},
+                {title: 'Emphasis', value: 'em'},
+              ]
+            },
+          }],
+        }
+      ],
+      group: 'details',
+    },
+    {
       name: 'days',
       type: 'array',
       hidden: ({ parent }) => !!parent.use,
@@ -372,6 +491,11 @@ export default {
                       type: 'number',
                       fieldset: 'priceAndReservation',
                       validation: Rule => Rule.precision(2).positive(),
+                    },
+                    {
+                      name: 'freeOffer',
+                      type: 'boolean',
+                      fieldset: 'priceAndReservation',
                     },
                     {
                       name: 'buyUrl',
@@ -558,6 +682,12 @@ export default {
       validation: Rule => Rule.precision(2).positive(),
     },
     {
+      name: 'freeOffer',
+      type: 'boolean',
+      fieldset: 'priceAndReservation',
+      group: 'details',
+    },
+    {
       name: 'buyUrl',
       type: 'url',
       fieldset: 'priceAndReservation',
@@ -576,12 +706,12 @@ export default {
       group: 'details',
     },
     {
-      name: 'sponsors',
+      name: 'partners',
       type: 'array',
       group: 'details',
       of: [
         {
-          name: 'sponsor',
+          name: 'partner',
           type: 'file',
         },
       ]

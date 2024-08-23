@@ -60,7 +60,7 @@ function toggleProject(projectIndex, event) {
                     </a>
                   {/if}
                 {:else}
-                  {#if openProject === i}
+                  {#if openProject === i && !item.displayAsSinglePage}
                     <a class="project-item font-m" href={item._type === 'event' ? '/events/' + item.slug.current : '/festivals/' + item.slug.current}
                     transition:slide={{ duration: 500 }}
                     >
@@ -74,7 +74,21 @@ function toggleProject(projectIndex, event) {
                         <h2>{item.title}{#if item.subtitle}<br>{item.subtitle}{/if}</h2>
                       </div>
                     </a>
-                    {/if}
+                  {:else if openProject === i && item.displayAsSinglePage}
+                    <a class="project-item font-m" href={'/projects/' + item.slug.current}
+                    transition:slide={{ duration: 500 }}
+                    >
+                      <img src={urlFor(item.cover).width(innerWidth > 1080 ? 1280 : 800)} alt="">
+                      <div class="project-item-text">
+                        {#if item._type == 'event' && item.start}
+                          <p class="font-s">{formatDate(item.start, item.end)}</p>
+                        {:else if item.days}
+                          <p class="font-s">{formatDate(item.days[0].date, item.days[item.days.length - 1].date)}</p>
+                        {/if}
+                        <h2>{item.title}{#if item.subtitle}<br>{item.subtitle}{/if}</h2>
+                      </div>
+                    </a>
+                  {/if}
                 {/if}
             {/each}
           </div>

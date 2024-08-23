@@ -45,17 +45,21 @@ let innerWidth = $state()
         {/if}
         {#if item.price}
           <div class="price">
-            <p class="price-value font-s">Prezzo {item.price.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
+            <p class="price-value font-s">{#if langer.lang === 'it'}Prezzo {:else}Price {/if}{item.price.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
             {#if item.buyUrl}
-              <a class="price-url font-xs" href={item.buyUrl} target="_blank">Acquista qui</a>
+              <a class="price-url font-xs" href={item.buyUrl} target="_blank">{#if langer.lang === 'it'}Acquista qui{:else}Buy here{/if}</a>
             {:else if item.reservationUrl}
-              <a class="price-url font-xs" href={item.reservationUrl} target="_blank">Iscriviti qui</a>
+              <a class="price-url font-xs" href={item.reservationUrl} target="_blank">{#if langer.lang === 'it'}Iscriviti qui{:else}Subscribe here{/if}</a>
             {/if}
           </div>
         {:else}
           <div class="price">
-            <p class="price-value font-s">Evento gratuito{#if item.reservationUrl}{@html ' previa iscrizione'}{/if}</p>
-            {#if item.reservationUrl}<a class="price-url font-xs" href={item.reservationUrl}>Iscriviti qui</a>{/if}
+            {#if item.freeOffer}
+              <p class="price-value font-s">{#if langer.lang === 'it'}Offerta libera{:else}Free offer{/if}{#if item.reservationUrl}{@html ' previa iscrizione'}{/if}</p>
+            {:else}
+              <p class="price-value font-s">{#if langer.lang === 'it'}Evento gratuito{:else}Free event{/if}{#if item.reservationUrl}{@html ' previa iscrizione'}{/if}</p>
+            {/if}
+            {#if item.reservationUrl}<a class="price-url font-xs" href={item.reservationUrl}>{#if langer.lang === 'it'}Iscriviti qui{:else}Subscribe here{/if}</a>{/if}
           </div>
         {/if}
       </div>

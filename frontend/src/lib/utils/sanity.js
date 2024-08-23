@@ -52,11 +52,12 @@ export async function getHomepage() {
 				time,
 				days,
 				price,
+				freeOffer,
 				reservationUrl,
 				buyUrl,
 				location,
 				googleMaps,
-				sponsors,
+				partners,
 				use,
 				url
 			}
@@ -193,9 +194,13 @@ export async function getFestival(slug) {
 			backgroundImage,
 			location,
 			googleMaps,
-			sponsors [] {
+			partners [] {
 				'url': asset->url
 			},
+			exhibitionTitle,
+			exhibitionContent,
+			exhibitionStart,
+			exhibitionEnd,
 			infoTitle,
 			infoContent
 		}
@@ -239,9 +244,56 @@ export async function getEvent(slug) {
 			location,
 			googleMaps,
 			price,
+			freeOffer,
 			reservationUrl,
 			buyUrl,
-			sponsors [] {
+			partners [] {
+				'url': asset->url
+			}
+		}
+		`,
+		{
+		slug
+	});
+}
+
+export async function getProjects() {
+	return await client.fetch(
+		`
+		*[_type == "project" && displayAsSinglePage == true] {
+			...,
+		} | order(title asc)
+		`
+	);
+}
+
+export async function getProject(slug) {
+	return await client.fetch(
+		`
+		*[_type == "project" && slug.current == $slug]{
+			_type,
+			title,
+			slug {
+				current,
+			},
+			cover {
+				asset {
+					_ref
+				},
+				'height': asset->metadata.dimensions.height,
+				'width': asset->metadata.dimensions.width,
+				'aspectRatio': asset->metadata.dimensions.aspectRatio,
+			},
+			slider [] {
+					asset {
+						_ref
+					},
+					'height': asset->metadata.dimensions.height,
+					'width': asset->metadata.dimensions.width,
+					'aspectRatio': asset->metadata.dimensions.aspectRatio,
+			},
+			content,
+			partners [] {
 				'url': asset->url
 			}
 		}

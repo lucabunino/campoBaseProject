@@ -101,7 +101,12 @@ export default {
         timeFormat: 'HH.mm',
       },
       fieldset: 'datetime',
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.custom((start, context) => {
+        if (context.document?.time === false && !start) {
+          return 'Start date is required when "Hide time" is not checked';
+        }
+        return true;
+      }),
       group: 'details',
     },
     {
@@ -139,6 +144,12 @@ export default {
       fieldset: 'priceAndReservation',
       group: 'details',
       validation: Rule => Rule.precision(2).positive(),
+    },
+    {
+      name: 'freeOffer',
+      type: 'boolean',
+      fieldset: 'priceAndReservation',
+      group: 'details',
     },
     {
       name: 'buyUrl',
@@ -238,12 +249,12 @@ export default {
       group: 'details',
     },
     {
-      name: 'sponsors',
+      name: 'partners',
       type: 'array',
       group: 'details',
       of: [
         {
-          name: 'sponsor',
+          name: 'partner',
           type: 'file',
         },
       ]

@@ -65,29 +65,6 @@ function Marquee(selector, speed) {
       <img class="cover" src={urlFor(item.cover).width(innerWidth > 1080 ? 1280 : 800)} alt="Image for {item.title}">
     {/if}
   <div>
-    <div id="info">
-      <p class="datetime font-s">{formatDate(item.start, item.end)}{#if !item.time}<br>{formatTime(item.start, item.end)}{/if}</p>
-      {#if item.location}<a class="place font-s" href={item.googleMaps} target="_blank">@{item.location}</a>{/if}
-      {#if item.price}
-        <div class="price">
-          <p class="price-value font-s">{#if langer.lang === 'it'}Prezzo {:else}Price {/if}{item.price.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
-          {#if item.buyUrl}
-            <a class="price-url font-xs" href={item.buyUrl} target="_blank">{#if langer.lang === 'it'}Acquista qui{:else}Buy here{/if}</a>
-          {:else if item.reservationUrl}
-            <a class="price-url font-xs" href={item.reservationUrl} target="_blank">{#if langer.lang === 'it'}Iscriviti qui{:else}Subscribe here{/if}</a>
-          {/if}
-        </div>
-      {:else}
-        <div class="price">
-          {#if item.freeOffer}
-            <p class="price-value font-s">{#if langer.lang === 'it'}Offerta libera{:else}Free offer{/if}{#if item.reservationUrl}{@html ' previa iscrizione'}{/if}</p>
-          {:else}
-            <p class="price-value font-s">{#if langer.lang === 'it'}Evento gratuito{:else}Free event{/if}{#if item.reservationUrl}{@html ' previa iscrizione'}{/if}</p>
-          {/if}
-          {#if item.reservationUrl}<a class="price-url font-xs" href={item.reservationUrl}>{#if langer.lang === 'it'}Iscriviti qui{:else}Subscribe here{/if}</a>{/if}
-        </div>
-      {/if}
-    </div>
     {#if item.content}
       <div id="content">
         <PortableText
@@ -105,7 +82,7 @@ function Marquee(selector, speed) {
     {/if}
     {#if item.partners}
       <div id="partners">
-        <h4 class="font-s">Partners</h4>
+        <h4 class="font-s">partnered by</h4>
         {#if item.partners.length > 3}
         <div class="marquee">
           <div class="marquee-content">
