@@ -146,24 +146,26 @@ function Marquee(selector, speed) {
   {#if day.activities}
     <h3 class="day font-l" onkeyup={(e) => toggleDay(i)} onclick={(e) => toggleDay(i, e)}>{Intl.DateTimeFormat(langer.lang, { weekday: 'long' }).format(new Date(day.date))}</h3>
     {#each day.activities as activity, j}
-      {#if activity && activity.description}
+      {#if activity && activity.title}
         {#if openDay === i}
           <div class="activity font-m" 
           transition:slide={{ duration: 500 }}>
             <p class="time font-xs">{formatTimeStrings(activity.start, activity.end)}</p>
             <div class="content font-s">
               <p class="title">{activity.title}</p>
-              <PortableText
-              value={activity.description}
-              components={{
-                block: {
-                  normal: PortableTextStyle,
-                },
-                marks: {
-                  link: PortableTextStyle,
-                },
-              }}
-              />
+              {#if activity.description}
+                <PortableText
+                value={activity.description}
+                components={{
+                  block: {
+                    normal: PortableTextStyle,
+                  },
+                  marks: {
+                    link: PortableTextStyle,
+                  },
+                }}
+                />
+              {/if}
             </div>
             {#if activity.price}
               <div class="price font-xs">
