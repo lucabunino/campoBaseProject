@@ -167,11 +167,11 @@ function Marquee(selector, speed) {
             </div>
             {#if activity.price}
               <div class="price font-xs">
-                <p class="price-value">Prezzo {activity.price.toLocaleString(langer.lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
+                <p class="price-value">{#if langer.lang === 'it'}{@html 'Prezzo '}{:else}{@html 'Price '}{/if}{activity.price.toLocaleString(langer.lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
                 {#if activity.buyUrl}
-                  <a class="price-url" href={activity.buyUrl} target="_blank">Acquista qui</a>
+                  <a class="price-url" href={activity.buyUrl} target="_blank">{#if langer.lang === 'it'}Acquista qui{:else}Buy here{/if}</a>
                 {:else if activity.reservationUrl}
-                  <a class="price-url" href={activity.reservationUrl} target="_blank">Iscriviti qui</a>
+                  <a class="price-url" href={activity.reservationUrl} target="_blank">{#if langer.lang === 'it'}Iscriviti qui{:else}Subscribe here{/if}</a>
                 {/if}
               </div>
             {:else}

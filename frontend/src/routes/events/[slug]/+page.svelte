@@ -70,7 +70,7 @@ function Marquee(selector, speed) {
       {#if item.location}<a class="place font-s" href={item.googleMaps} target="_blank">@{item.location}</a>{/if}
       {#if item.price}
         <div class="price">
-          <p class="price-value font-s">{#if langer.lang === 'it'}Prezzo {:else}Price {/if}{item.price.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
+          <p class="price-value font-s">{#if langer.lang === 'it'}{@html 'Prezzo '}{:else}{@html 'Price '}{/if}{item.price.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} euro</p>
           {#if item.buyUrl}
             <a class="price-url font-xs" href={item.buyUrl} target="_blank">{#if langer.lang === 'it'}Acquista qui{:else}Buy here{/if}</a>
           {:else if item.reservationUrl}
@@ -80,9 +80,9 @@ function Marquee(selector, speed) {
       {:else}
         <div class="price">
           {#if item.freeOffer}
-            <p class="price-value font-s">{#if langer.lang === 'it'}Offerta libera{:else}Free offer{/if}{#if item.reservationUrl}{@html ' previa iscrizione'}{/if}</p>
+            <p class="price-value font-s">{#if langer.lang === 'it'}Offerta libera{:else}Free offer{/if}{#if item.reservationUrl}{@html langer.lang === 'it' ? ' previa iscrizione' : ' upon registration'}{/if}</p>
           {:else}
-            <p class="price-value font-s">{#if langer.lang === 'it'}Evento gratuito{:else}Free event{/if}{#if item.reservationUrl}{@html ' previa iscrizione'}{/if}</p>
+            <p class="price-value font-s">{#if langer.lang === 'it'}Evento gratuito{:else}Free event{/if}{#if item.reservationUrl}{@html langer.lang === 'it' ? ' previa iscrizione' : ' upon registration'}{/if}</p>
           {/if}
           {#if item.reservationUrl}<a class="price-url font-xs" href={item.reservationUrl}>{#if langer.lang === 'it'}Iscriviti qui{:else}Subscribe here{/if}</a>{/if}
         </div>
