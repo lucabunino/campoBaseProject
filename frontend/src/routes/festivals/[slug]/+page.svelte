@@ -3,18 +3,18 @@
 const { data } = $props()
 const item = data.item[0]
 
-import { urlFor } from "$lib/utils/image.js";
+import { urlFor } from "$lib/utils/image";
 import { PortableText } from '@portabletext/svelte'
 import PortableTextStyle from '$lib/components/portableTextStyle.svelte'
-import { formatDate, formatTimeStrings } from "$lib/utils/date.js";
+import { formatDate, formatTimeStrings } from "$lib/utils/date";
 import { register } from 'swiper/element/bundle';
 import { slide, fade } from "svelte/transition";
 register();
 
 // Import stores
-import { getLang } from '$lib/stores/lang.svelte.js';
+import { getLang } from '$lib/stores/lang.svelte';
 const langer = getLang();
-import { getColor } from '$lib/stores/color.svelte.js';
+import { getColor } from '$lib/stores/color.svelte';
 const colorer = getColor();
 item.background ? colorer.changePrimaryColor(item.background.hex) : colorer.changePrimaryColor('#8A7369');
 item.hover ? colorer.changeSecondaryColor(item.hover.hex) : colorer.changeSecondaryColor('#FF6B6B');
@@ -161,7 +161,6 @@ function Marquee(selector, speed) {
     <img class="cover" src={urlFor(item.cover).width(innerWidth > 1080 ? 1280 : 800)} alt="Image for {item.title}">
   {/if}
   {#if item.exhibitionTitle && item.exhibitionContent}
-  {$inspect(item)}
     <h3 id="exhibitionTitle" class="day font-l" onkeyup={(e) => toggleDay('exhibition')} onclick={(e) => toggleDay('exhibition', e)}>{item.exhibitionTitle[langer.lang]}</h3>
     {#if openDay === 'exhibition'}
       <div id="exhibitionContent" class="font-s"
