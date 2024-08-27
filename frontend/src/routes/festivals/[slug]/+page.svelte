@@ -37,23 +37,64 @@ $effect(() => {
   }
   const timer = setInterval(() => {
     if (data.pathname === "/festivals/campo-base-festival-adamello-2024") {
+      // Create img
       const img = document.createElement("img");
       img.src = string;
+      img.classList.add("draggable"); 
+      img.draggable = false; // Disable native drag-and-drop
+      img.ondragstart = () => false; // Prevent the native dragstart event
       const left = Math.floor(Math.random() * innerWidth);
       const top = Math.floor(Math.random() * innerHeight);
       img.style.left = `${left/innerWidth*100}vw`;
       img.style.top = `${top/innerHeight*100}vh`;
+      
+      // Add event listeners for dragging
+      img.addEventListener('pointerdown', onPointerDown);
+      img.addEventListener('pointermove', onPointerMove);
+      img.addEventListener('pointerup', onPointerUp);
+      img.addEventListener('pointercancel', onPointerUp);
+
+      // Add img to page
       stickers.appendChild(img);
       stickerNumber++
       if (stickerNumber > 7) {
         stickerNumber = 1
       }
     }
-  }, 4000);
+  }, 6000);
   return () => clearInterval(timer);
 });
 
 // Functions
+let activeSticker = null;
+let offsetX = 0;
+let offsetY = 0;
+
+function onPointerDown(event) {
+  activeSticker = event.target;
+  const rect = activeSticker.getBoundingClientRect();
+  // Calculate the offset relative to the center of the image
+  offsetX = event.clientX - (rect.left + rect.width / 2);
+  offsetY = event.clientY - (rect.top + rect.height / 2);
+  activeSticker.setPointerCapture(event.pointerId);
+}
+
+
+function onPointerMove(event) {
+  if (!activeSticker) return;
+  // Adjust the position considering the offset and image size
+  const left = event.clientX - offsetX;
+  const top = event.clientY - offsetY;
+  activeSticker.style.left = `${left}px`;
+  activeSticker.style.top = `${top}px`;
+}
+
+function onPointerUp(event) {
+  if (!activeSticker) return;
+  activeSticker.releasePointerCapture(event.pointerId);
+  activeSticker = null;
+}
+
 function toggleDay(dayIndex, event) {
   if (openDay === dayIndex) {
     openDay = undefined
@@ -425,6 +466,10 @@ swiper-slide img {
   width: 4vw;
   height: auto;
   z-index: 4;
+  cursor: move;
+}
+:global(#stickers>img:active) {
+  cursor: grabbing;
 }
 @media screen and (max-width: 1080px) {
   :global(#stickers>img) {

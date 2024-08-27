@@ -408,6 +408,7 @@ h4 {
       -ms-flex-align: center;
           align-items: center;
   border-top: solid 1px #000;
+  overflow: hidden;
 }
 .mc-field-group.last {
   border-bottom: solid 1px #000;
