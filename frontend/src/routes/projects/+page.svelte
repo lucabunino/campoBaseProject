@@ -121,9 +121,9 @@ section {
   border: none;
   overflow: hidden;
 }
-h3:hover {
+/* h3:hover {
   color: var(--secondaryColor);
-}
+} */
 .project {
   display: block;
 }

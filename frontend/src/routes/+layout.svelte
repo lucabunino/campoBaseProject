@@ -248,24 +248,6 @@ function checkLanguage() {
     top: -100vh;
   }
 }
-#loader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 10;
-  border-left: solid 1px #000;
-  border-right: solid 1px #000;
-  -webkit-animation: leftLoad 300ms forwards, leftUnload 300ms forwards 600ms;
-          animation: leftLoad 300ms forwards, leftUnload 300ms forwards 600ms;
-  -webkit-transition: background-color ease-in-out 500ms;
-  -o-transition: background-color ease-in-out 500ms;
-  transition: background-color ease-in-out 500ms;
-  -webkit-transition-delay: 1000ms;
-       -o-transition-delay: 1000ms;
-          transition-delay: 1000ms;
-}
 #bg {
   position: fixed;
   top: 0;
@@ -274,14 +256,6 @@ function checkLanguage() {
   height: 100vh;
   z-index: -1;
   background-color: var(--primaryColor);
-  /* transition: background-color ease-in-out 100ms; */
-  /* transition-delay: 300ms; */
-}
-@media screen and (max-width: 1080px) {
-  #loader {
-    -webkit-animation: topLoad 300ms forwards, topUnload 300ms forwards 600ms;
-            animation: topLoad 300ms forwards, topUnload 300ms forwards 600ms;
-  }
 }
 
 /* Menu */
