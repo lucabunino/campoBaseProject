@@ -9,6 +9,7 @@ import { urlFor } from '$lib/utils/image';
 import { onMount } from 'svelte'
 import { workaround, pageIn, pageOut, loaderOut, newsletterInOut } from '$lib/utils/transition';
 import { browser } from '$app/environment';
+import { inject } from '@vercel/analytics'; inject()
 
 // Import stores
 import { getColor } from '$lib/stores/color.svelte.js';
