@@ -202,7 +202,10 @@ export async function getFestival(slug) {
 			exhibitionStart,
 			exhibitionEnd,
 			infoTitle,
-			infoContent
+			infoContent,
+			report {
+				'url': asset->url
+			}
 		}
 		`,
 		{

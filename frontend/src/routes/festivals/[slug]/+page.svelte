@@ -291,6 +291,10 @@ function Marquee(selector, speed) {
   <div id="stickers" bind:this={stickers}></div>
 {/if}
 
+{#if item.report}
+  <a class="report font-xs" href={item.report.url} target="_blank">Report ↓</a>
+{/if}
+
 <style>
 /* Common */
 #bg-holder {
@@ -410,9 +414,6 @@ swiper-slide img {
 .price-value {
   text-align: left;
 }
-.price-url {
-  /* text-align: right; */
-}
 #exhibitionContent,
 #infoContent {
   text-align: left;
@@ -454,6 +455,8 @@ swiper-slide img {
   max-width: 2em;
   margin-right: 1em;
 }
+
+/* Stickers */
 #stickers {
   display: contents;
 }
@@ -469,6 +472,21 @@ swiper-slide img {
 }
 :global(#stickers>img:active) {
   cursor: grabbing;
+}
+
+/* Report */
+.report {
+  position: fixed;
+  z-index: 11;
+  right:  calc(var(--gutter)/2);
+  bottom: calc(var(--gutter)/2);
+  padding: .3em 1em .5em;
+  border-radius: 1em;
+  background-color: var(--secondaryColor);
+}
+.report:hover {
+  background-color: #000;
+  color: #FFF;
 }
 @media screen and (max-width: 1080px) {
   :global(#stickers>img) {

@@ -716,6 +716,11 @@ export default {
         },
       ]
     },
+    {
+      name: 'report',
+      type: 'file',
+      group: 'details',
+    },
   ],
   orderings: [
     {
