@@ -566,99 +566,147 @@ export default {
       group: 'details',
     },
     {
-      name: 'infoTitle',
-      type: 'object',
-      fields: [
+      name: 'infos',
+      type: 'array',
+      of: [
         {
-          name: 'it',
-          type: 'string',
-          validation: (Rule) => Rule.required(),
-        },
-        {
-          name: 'en',
-          type: 'string',
-          validation: (Rule) => Rule.required(),
-          
-        }
-      ],
-      group: 'details',
-    },
-    {
-      name: 'infoContent',
-      type: 'object',
-      fields: [
-        {
-          name: 'it',
-          type: 'array',
-          validation: (Rule) => Rule.required(),
-          of: [{
-            type: 'block',
-            lists: [],
-            styles: [{title: 'Testo corrente', value: 'normal'},],
-            marks: {
-              annotations: [
+          name: 'info',
+          type: 'object',
+          fields: [
+            {
+              name: 'infoTitle',
+              type: 'object',
+              fields: [
                 {
-                  name: 'link',
-                  type: 'object',
-                  title: 'External link',
-                  fields: [
-                    {
-                      name: 'href',
-                      type: 'url',
-                      title: 'URL'
-                    },
-                    {
-                      title: 'Open in new tab',
-                      name: 'blank',
-                      description: 'Read https://css-tricks.com/use-target_blank/',
-                      type: 'boolean'
-                    }
-                  ]
+                  name: 'it',
+                  type: 'string',
+                  validation: (Rule) => Rule.required(),
                 },
-              ],
-              decorators: [
-                {title: 'Strong', value: 'strong'},
-                {title: 'Emphasis', value: 'em'},
-              ]
-            },
-          }],
-        },
-        {
-          name: 'en',
-          type: 'array',
-          validation: (Rule) => Rule.required(),
-          of: [{
-            type: 'block',
-            lists: [],
-            styles: [{title: 'Testo corrente', value: 'normal'},],
-            marks: {
-              annotations: [
                 {
-                  name: 'link',
-                  type: 'object',
-                  title: 'External link',
-                  fields: [
-                    {
-                      name: 'href',
-                      type: 'url',
-                      title: 'URL'
-                    },
-                    {
-                      title: 'Open in new tab',
-                      name: 'blank',
-                      description: 'Read https://css-tricks.com/use-target_blank/',
-                      type: 'boolean'
-                    }
-                  ]
-                },
+                  name: 'en',
+                  type: 'string',
+                  validation: (Rule) => Rule.required(),
+                  
+                }
               ],
-              decorators: [
-                {title: 'Strong', value: 'strong'},
-                {title: 'Emphasis', value: 'em'},
-              ]
             },
-          }],
-        }
+            {
+              name: 'infoContent',
+              type: 'object',
+              fields: [
+                {
+                  name: 'it',
+                  type: 'array',
+                  validation: (Rule) => Rule.required(),
+                  of: [
+                    {
+                    type: 'block',
+                    lists: [],
+                    styles: [{title: 'Testo corrente', value: 'normal'},],
+                    marks: {
+                      annotations: [
+                        {
+                          name: 'link',
+                          type: 'object',
+                          title: 'External link',
+                          fields: [
+                            {
+                              name: 'href',
+                              type: 'url',
+                              title: 'URL'
+                            },
+                            {
+                              title: 'Open in new tab',
+                              name: 'blank',
+                              description: 'Read https://css-tricks.com/use-target_blank/',
+                              type: 'boolean'
+                            }
+                          ]
+                        },
+                      ],
+                      decorators: [
+                        {title: 'Strong', value: 'strong'},
+                        {title: 'Emphasis', value: 'em'},
+                      ]
+                    },
+                  },
+                  {
+                    type: 'image',
+                    fields: [
+                      {
+                        name: 'caption',
+                        type: 'string',
+                      },
+                      {
+                        name: 'alt',
+                        type: 'string',
+                        title: 'Alternative text for accessibility',
+                      },
+                    ],
+                  },
+                ],
+                },
+                {
+                  name: 'en',
+                  type: 'array',
+                  validation: (Rule) => Rule.required(),
+                  of: [
+                    {
+                    type: 'block',
+                    lists: [],
+                    styles: [{title: 'Testo corrente', value: 'normal'},],
+                    marks: {
+                      annotations: [
+                        {
+                          name: 'link',
+                          type: 'object',
+                          title: 'External link',
+                          fields: [
+                            {
+                              name: 'href',
+                              type: 'url',
+                              title: 'URL'
+                            },
+                            {
+                              title: 'Open in new tab',
+                              name: 'blank',
+                              description: 'Read https://css-tricks.com/use-target_blank/',
+                              type: 'boolean'
+                            }
+                          ]
+                        },
+                      ],
+                      decorators: [
+                        {title: 'Strong', value: 'strong'},
+                        {title: 'Emphasis', value: 'em'},
+                      ]
+                    },
+                  },
+                  {
+                    type: 'image',
+                    fields: [
+                      {
+                        name: 'caption',
+                        type: 'string',
+                      },
+                      {
+                        name: 'alt',
+                        type: 'string',
+                        title: 'Alternative text for accessibility',
+                      },
+                    ],
+                  },
+                ],
+                }
+              ],
+            },
+          ],
+          preview: {
+            select: {
+              title: 'infoTitle.it',
+            },
+          },
+        },
       ],
       group: 'details',
     },
@@ -717,8 +765,18 @@ export default {
       ]
     },
     {
-      name: 'report',
-      type: 'file',
+      name: 'download',
+      type: 'object',
+      fields: [
+        {
+          name: 'downloadName',
+          type: 'string',
+        },
+        {
+          name: 'downloadFile',
+          type: 'file',
+        },
+      ],
       group: 'details',
     },
   ],

@@ -2,10 +2,12 @@
 // Import data
 const { data } = $props()
 const item = data.item[0]
+$inspect(item)
 
 import { urlFor } from "$lib/utils/image";
 import { PortableText } from '@portabletext/svelte'
 import PortableTextStyle from '$lib/components/portableTextStyle.svelte'
+import PortableTextImage from '$lib/components/portableTextImage.svelte'
 import { formatDate, formatTimeStrings } from "$lib/utils/date";
 import { register } from 'swiper/element/bundle';
 import { slide, fade } from "svelte/transition";
@@ -244,24 +246,32 @@ function Marquee(selector, speed) {
     {/each}
   {/if}
   {/each}
-  {#if item.infoTitle && item.infoContent}
-    <h3 id="infoTitle" class="day font-l" onkeyup={(e) => toggleDay('info')} onclick={(e) => toggleDay('info', e)}>{item.infoTitle[langer.lang]}</h3>
-    {#if openDay === 'info'}
-      <div id="infoContent" class="font-s"
-      transition:slide={{ duration: 500 }}>
-        <PortableText
-        value={item.infoContent[langer.lang]}
-        components={{
-          block: {
-            normal: PortableTextStyle,
-          },
-          marks: {
-            link: PortableTextStyle,
-          },
-        }}
-        />
-      </div>
-    {/if}
+  <!-- TODO: Check Sanity import. Do a each loop trough infos, then repeat infoTitle and infoContent -->
+  {#if item.infos}
+    {#each item.infos as info, i}
+      {#if info.infoTitle && info.infoContent}
+        <h3 id="infoTitle" class="day font-l" onkeyup={(e) => toggleDay('info')} onclick={(e) => toggleDay('info' + i, e)}>{info.infoTitle[langer.lang]}</h3>
+        {#if openDay === 'info' + i}
+          <div id="infoContent" class="font-s"
+          transition:slide={{ duration: 500 }}>
+            <PortableText
+            value={info.infoContent[langer.lang]}
+            components={{
+              types: {
+                image: PortableTextImage,
+              },
+              block: {
+                normal: PortableTextStyle,
+              },
+              marks: {
+                link: PortableTextStyle,
+              },
+            }}
+            />
+          </div>
+        {/if}
+      {/if}
+    {/each}
   {/if}
   {#if item.partners}
       <div id="partners">
@@ -291,8 +301,8 @@ function Marquee(selector, speed) {
   <div id="stickers" bind:this={stickers}></div>
 {/if}
 
-{#if item.report}
-  <a class="report font-xs" href={item.report.url} target="_blank">Report ↓</a>
+{#if item.download && item.download.downloadFile && item.download.downloadName}
+  <a class="report font-xs" href={item.download.downloadFile.url} target="_blank">{item.download.downloadName} ↓</a>
 {/if}
 
 <style>
